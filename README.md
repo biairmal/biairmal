@@ -1,16 +1,32 @@
-## Hi there 👋
+# Hi, I'm Bandana 👋
 
-<!--
-**biairmal/biairmal** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+Software Engineer based in Jakarta, Indonesia 🇮🇩  
 
-Here are some ideas to get you started:
+I have 3+ years of experience building web applications across backend and frontend. I mainly work with .NET, and also have professional experience using Go and Spring Boot. Most of my work involves building APIs, integrating systems, and supporting production environments.
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+I enjoy learning how systems work under the hood and continuously improving how I design and structure applications.
+
+## 🛠 Tech Stack
+
+**Languages**  
+C#, Go, Java, TypeScript, JavaScript  
+
+**Backend**  
+.NET Core, Spring Boot, REST API, gRPC, Microservices  
+
+**Frontend**  
+React, Blazor, Tailwind CSS  
+
+**Data & Messaging**  
+PostgreSQL, MySQL, Redis, Cosmos DB, RabbitMQ, Azure Event Hub  
+
+**DevOps & Cloud**  
+Docker, CI/CD, Azure  
+
+---
+
+Currently interested in improving my knowledge in system design, cloud architecture, and scalable backend development.
+
+📫 Connect with me  
+LinkedIn: https://linkedin.com/in/bandanairmal  
+Email: bandanairmal@gmail.com
