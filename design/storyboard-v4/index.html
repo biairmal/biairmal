@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>biairmal v4 · Storyboard · draft 02</title>
+<title>biairmal v4 · Storyboard · draft 03</title>
 <style>
   :root {
     --bg: #0a0a0a; --fg: #ededed; --muted: #a0a0a0; --faint: #6e6e6e;
@@ -80,18 +80,18 @@
 <body>
 <div class="wrap">
 
-  <p class="label"><span class="dot"></span>Design phase · v4 · draft 02 · full 3D</p>
+  <p class="label"><span class="dot"></span>Design phase · v4 · draft 03 · realism pass</p>
   <h1>Digital samurai.<br>A real 3D world, one scroll long.</h1>
-  <p class="lede">Draft 02 drops the 2.5D and particle ideas. The samurai becomes a real rigged 3D character, and the site becomes one continuous moonlit set. Scrolling moves a film camera through that set. Every frame below is a real-time 3D render from a previz scene built from stand-in primitives: the camera, lens, light and layout are what we would build, but the models are placeholders for the final art.</p>
+  <p class="lede">Draft 03 is the realism pass. The samurai now wears black lacquered armour laced in white silk, with a menpō under his kasa. The world gets fog lying on the water, drifting dust, moonlight shafts, depth of field, rippled reflections and soft shadows. The background kanji are gone. Every frame is a real-time three.js render. The body is a stock rigged mannequin and the armour is built in code, so the final hand-sculpted model will go further still.</p>
   <img class="hero-img" src="frames/s01.jpg" alt="Hero previz: samurai silhouetted against a full moon, standing on a stone slab over black water, with the hero copy on the left">
-  <p class="cap">Shot 01 · previz render · stand-in geometry</p>
+  <p class="cap">Shot 01 · real-time previz render · mannequin body with procedural armour</p>
 
   <section>
-    <p class="label"><span class="k">改</span>What changed since draft 01</p>
+    <p class="label"><span class="k">改</span>What changed since draft 02 (your feedback)</p>
     <div class="grid3">
-      <div><b>Real 3D, not 2.5D</b><span>The samurai is a skinned, animated 3D character. The camera can orbit, crane and push past him because he has a back, a side and depth.</span></div>
-      <div><b>No particles (for now)</b><span>Dust and kanji morphs are gone. Shots now join through <em>camera moves</em> inside one world. The kanji are carved, lit monoliths that the camera visits. Particles can come back later as an extra layer.</span></div>
-      <div><b>"Digital" through light</b><span>What makes him digital is a hairline light seam on his kasa rim, shoulder wings, hakama pleats, scabbard mouth and blade edge. They read like circuit traces, or kintsugi done in light.</span></div>
+      <div><b>Armour and menpō</b><span>Still black and white. Black lacquer plates bound with dense white silk lacing (<em>kebiki odoshi</em>), sode shoulder guards, a laced dō and kusazuri, a lacquered menpō with a throat guard, and the kasa on top. The hakama is pleated and moves like cloth, not a cone.</span></div>
+      <div><b>Atmosphere</b><span>Mist in slow layers just above the water, dust motes that brighten when they're between you and the moon, light shafts from the moon past his silhouette, depth of field and film grain. Particles are back, as weather, not as the samurai.</span></div>
+      <div><b>No background kanji</b><span>The glowing monoliths are removed. Kanji appear only as the small section labels they are on today's site. The sets (slab, walkway, sword rack, tsuba ring) are the landmarks.</span></div>
     </div>
   </section>
 
@@ -115,8 +115,8 @@
   <section>
     <p class="label"><span class="k">地</span>The world</p>
     <h2>One continuous set, not a stack of sections.</h2>
-    <p class="muted" style="max-width:760px">Everything sits in a single scene on still black water under one moon. Each section has a <em>set</em>, and the camera travels between sets. Sets that are far from the camera are hidden and loaded on demand, so the cost stays at roughly one set at a time.</p>
-    <svg class="map" viewBox="0 0 1000 560" role="img" aria-label="Top view of the world: the hero slab at the left, the 人 monolith, the walkway with lanterns, the sword rack and the tsuba ring to the right, with the camera path drawn through them">
+    <p class="muted" style="max-width:760px">Everything sits in a single scene on still black water under one moon, with mist lying on the surface. Each section has a <em>set</em>, and the camera travels between sets. Sets that are far from the camera are hidden and loaded on demand, so the cost stays at roughly one set at a time.</p>
+    <svg class="map" viewBox="0 0 1000 560" role="img" aria-label="Top view of the world: the hero slab at the left, the walkway with lanterns, the sword rack and the tsuba ring to the right, with the camera path drawn through them">
       <defs>
         <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#ededed" stroke-opacity=".04"/></pattern>
         <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#c4453f"/></marker>
@@ -129,26 +129,22 @@
       <!-- sets -->
       <rect x="196" y="262" width="50" height="34" fill="#2a2a2c" stroke="#ededed" stroke-opacity=".3"/>
       <text x="221" y="318" fill="#cfcfcf" font-family="Geist Mono, monospace" font-size="11" text-anchor="middle">STONE SLAB</text>
-      <rect x="430" y="150" width="24" height="7" fill="#ededed" transform="rotate(-28 442 154)"/>
-      <text x="444" y="136" fill="#cfcfcf" font-family="Noto Serif JP, serif" font-size="15" text-anchor="middle">人</text>
       <line x1="520" y1="232" x2="770" y2="232" stroke="#8a7a66" stroke-width="12" stroke-opacity=".35"/>
       <line x1="520" y1="232" x2="770" y2="232" stroke="#ededed" stroke-opacity=".6"/>
       <g fill="#0a0a0a" stroke="#ededed"><circle cx="560" cy="248" r="5"/><circle cx="620" cy="216" r="5"/><circle cx="680" cy="248" r="5"/><circle cx="740" cy="216" r="5"/></g>
-      <rect x="850" y="226" width="22" height="12" fill="#ededed"/>
-      <text x="861" y="214" fill="#cfcfcf" font-family="Noto Serif JP, serif" font-size="15" text-anchor="middle">道</text>
-      <text x="645" y="270" fill="#9a9a9a" font-family="Geist Mono, monospace" font-size="11" text-anchor="middle">WALKWAY · 4 LANTERNS</text>
+      <text x="645" y="270" fill="#cfcfcf" font-family="Geist Mono, monospace" font-size="11" text-anchor="middle">WALKWAY · 4 LANTERNS · MIST</text>
       <rect x="600" y="352" width="44" height="12" fill="#2a2a2c" stroke="#ededed" stroke-opacity=".4" transform="rotate(17 622 358)"/>
-      <text x="622" y="392" fill="#cfcfcf" font-family="Geist Mono, monospace" font-size="11" text-anchor="middle">戦 SWORD RACK</text>
+      <text x="622" y="392" fill="#cfcfcf" font-family="Geist Mono, monospace" font-size="11" text-anchor="middle">SWORD RACK</text>
       <circle cx="860" cy="470" r="22" fill="none" stroke="#ededed" stroke-opacity=".5"/>
       <g fill="#2a2a2c" stroke="#ededed" stroke-opacity=".6"><circle cx="882" cy="470" r="5"/><circle cx="838" cy="470" r="5"/><circle cx="860" cy="448" r="5"/><circle cx="860" cy="492" r="5"/></g>
-      <text x="860" y="518" fill="#cfcfcf" font-family="Geist Mono, monospace" font-size="11" text-anchor="middle">武 TSUBA RING</text>
+      <text x="860" y="518" fill="#cfcfcf" font-family="Geist Mono, monospace" font-size="11" text-anchor="middle">TSUBA RING</text>
       <!-- camera path -->
-      <path d="M136 256 C 170 262, 180 268, 193 272 C 160 250, 140 245, 140 239 C 220 230, 290 228, 335 228 C 420 228, 470 228, 525 228 C 600 300, 600 330, 600 330 C 700 400, 760 470, 785 480 C 500 400, 200 300, 80 253 C 100 248, 115 244, 125 242" fill="none" stroke="#c4453f" stroke-width="1.5" stroke-dasharray="6 5" marker-end="url(#ar)"/>
+      <path d="M136 256 C 170 262, 180 268, 193 272 C 160 250, 140 245, 140 239 C 300 232, 420 238, 474 239 C 500 236, 515 230, 525 228 C 600 300, 600 330, 600 330 C 700 400, 760 470, 785 480 C 500 400, 200 300, 80 253 C 100 248, 115 244, 125 242" fill="none" stroke="#c4453f" stroke-width="1.5" stroke-dasharray="6 5" marker-end="url(#ar)"/>
       <g font-family="Geist Mono, monospace" font-size="10" text-anchor="middle">
         <g><circle cx="136" cy="256" r="11" fill="#0a0a0a" stroke="#ededed"/><text x="136" y="260" fill="#ededed">01</text></g>
         <g><circle cx="193" cy="292" r="11" fill="#0a0a0a" stroke="#ededed"/><text x="193" y="296" fill="#ededed">02</text></g>
         <g><circle cx="140" cy="216" r="11" fill="#0a0a0a" stroke="#ededed"/><text x="140" y="220" fill="#ededed">03</text></g>
-        <g><circle cx="335" cy="228" r="11" fill="#0a0a0a" stroke="#ededed"/><text x="335" y="232" fill="#ededed">04</text></g>
+        <g><circle cx="474" cy="262" r="11" fill="#0a0a0a" stroke="#ededed"/><text x="474" y="266" fill="#ededed">04</text></g>
         <g><circle cx="525" cy="206" r="11" fill="#0a0a0a" stroke="#ededed"/><text x="525" y="210" fill="#ededed">05</text></g>
         <g><circle cx="600" cy="330" r="11" fill="#0a0a0a" stroke="#ededed"/><text x="600" y="334" fill="#ededed">06</text></g>
         <g><circle cx="785" cy="456" r="11" fill="#0a0a0a" stroke="#ededed"/><text x="785" y="460" fill="#ededed">07</text></g>
@@ -161,11 +157,11 @@
 
   <section>
     <p class="label"><span class="k">侍</span>The character</p>
-    <h2>One samurai, rigged, with eight clips.</h2>
+    <h2>One armoured samurai, rigged, with eight clips.</h2>
     <div class="grid3" style="margin-top:22px">
-      <div><b>Silhouette</b><span>It has to read at 60px tall against a full moon. The wide <em>kasa</em> (straw hat), the stiff <em>kataginu</em> shoulder wings, the flared <em>hakama</em>, and the katana with its saya at the left hip. No visible face: the hat keeps him anonymous.</span></div>
-      <div><b>Digital seams</b><span>Emissive hairlines run along the kasa rim, the wing edges, one pleat on each leg, the scabbard mouth (koiguchi) and the blade's hamon. They are white by night and turn red under the blood moon.</span></div>
-      <div><b>Asset spec</b><span>Draco-compressed glTF (.glb), about 25k triangles. The katana and saya are separate meshes so they can be swapped between hand and hip. KTX2 textures at 2K. The download budget is <b>≤ 4 MB</b> for the character with all clips.</span></div>
+      <div><b>Silhouette and armour</b><span>The wide <em>kasa</em> over a black lacquered <em>menpō</em> and laced throat guard. Large <em>sode</em> on the shoulders, a laced <em>dō</em> and <em>kusazuri</em>, lacquered <em>kote</em>, and a pleated <em>hakama</em>. The katana and saya sit at his left hip. Black lacquer and white silk only: the black and white comes from the materials themselves.</span></div>
+      <div><b>Digital seams</b><span>Emissive hairlines run along the kasa rim, the lowest plate of each sode and kusazuri, the edge of the chest plate, the menpō's mouth and eye slits, the koiguchi and the blade's hamon. They are white by night and turn red under the blood moon.</span></div>
+      <div><b>Asset spec</b><span>Sculpted in high detail, then baked to a game-ready mesh of about 40k triangles: normal maps carry the lacing, dents and lacquer wear. Draco-compressed glTF with KTX2 textures at 2K, and a separate katana and saya. The download budget is <b>≤ 6 MB</b> for the character with all clips.</span></div>
     </div>
     <table style="margin-top:26px">
       <tr><th>Clip</th><th>Used in</th><th>Length</th><th>Notes</th></tr>
@@ -238,13 +234,13 @@
 
     <!-- 04 -->
     <div class="shot">
-      <div class="shot-head"><span class="num">04</span><span class="kanji">人</span><h3>About: the first monolith</h3></div>
-      <div class="meta"><span>Scroll 24 – 36%</span><span>Lens 32mm</span><span>Crane down · slow truck right</span></div>
-      <img class="frame" src="frames/s04.jpg" alt="About section: copy and facts table on the left, a dark stone monolith with a glowing 人 on the right, the samurai standing small at its base">
+      <div class="shot-head"><span class="num">04</span><span class="kanji">人</span><h3>About: at the head of the path</h3></div>
+      <div class="meta"><span>Scroll 24 – 36%</span><span>Lens 40mm</span><span>Crane down · slow arc around him</span></div>
+      <img class="frame" src="frames/s04.jpg" alt="About section: copy and facts table on the left; on the right the armoured samurai in three-quarter view at the head of a walkway, lit stone lanterns and mist behind him">
       <div class="notes">
-        <div><h4>Frame</h4><p>The camera comes down from the sky to a black stone monolith on the water. 人 is carved into it and lit from inside. He stands at its foot, small, facing it. That gives a sense of scale and a quiet portrait.</p></div>
-        <div><h4>Motion</h4><p>The kanji ignites stroke by stroke as the section enters: left stroke, then right, in true stroke order. The fact rows draw their rules left to right and the years count up.</p></div>
-        <div><h4>Monolith system</h4><p>Every section gets one monolith (人 道 戦 武 連), the same object in a different place. Arriving at a monolith means arriving at a section, so they replace the floating kanji labels.</p></div>
+        <div><h4>Frame</h4><p>The camera comes down out of the sky to the head of the walkway. He stands in three-quarter view, in mist to the knee, with the first lanterns glowing behind him. This is the quiet portrait of the person behind the work: the closest we get to him on the site.</p></div>
+        <div><h4>Motion</h4><p>A slow arc of about 15° around him while you read. His head turns a little toward the camera, and the mist drifts across the boards. The fact rows draw their rules left to right and the years count up.</p></div>
+        <div><h4>Note</h4><p>The real model will hold up in this shot: lacquer, lacing and cloth at medium distance. A true face close-up waits for the final sculpt, so the previz avoids it.</p></div>
       </div>
     </div>
 
@@ -252,9 +248,9 @@
     <div class="shot">
       <div class="shot-head"><span class="num">05</span><span class="kanji">道</span><h3>Approach: walking the path</h3></div>
       <div class="meta"><span>Scroll 36 – 50% · pinned</span><span>Lens 30mm</span><span>Truck forward along the walkway, about 25m</span></div>
-      <img class="frame" src="frames/s05.jpg" alt="A wooden walkway over black water leading to a 道 monolith, with stone lanterns along it; the near lantern is lit and the step cards Plan and Build are on screen">
+      <img class="frame" src="frames/s05.jpg" alt="A wooden walkway over misty black water with stone lanterns along it and the samurai walking ahead; the near lanterns are lit and the step cards Plan and Build are on screen">
       <div class="notes">
-        <div><h4>Frame</h4><p>A wooden walkway runs out over the water with a light seam down its centre. Four stone lanterns (tōrō) stand along it, one per stage: Plan, Build, Ship, Sustain. The 道 monolith waits at the far end, under the crescent.</p></div>
+        <div><h4>Frame</h4><p>A wooden walkway runs out over the water with a light seam down its centre. Four stone lanterns (tōrō) stand along it, one per stage: Plan, Build, Ship, Sustain. Mist lies on the water and the crescent hangs above the far end.</p></div>
         <div><h4>Motion</h4><p>The section pins and scroll walks the camera down the path. He walks ahead of the camera, as a guide. Each lantern lights as you pass it: its card comes forward and the previous card settles back. A progress hairline runs along the bottom with a <code>01 / 04</code> counter.</p></div>
         <div><h4>Mobile</h4><p>Not pinned. The camera holds a fixed three-quarter view and the lanterns light up as their cards cross the middle of the screen.</p></div>
       </div>
@@ -303,9 +299,9 @@
     <div class="shot">
       <div class="shot-head"><span class="num">09</span><span class="kanji">連</span><h3>Contact: he turns to you</h3></div>
       <div class="meta"><span>Scroll 86 – 100%</span><span>Lens 24mm</span><span>Wide · static · god rays toward camera</span></div>
-      <img class="frame" src="frames/s09.jpg" alt="Contact: a big headline on the left, a blood moon on the right with red light rays, and the samurai facing the viewer on the slab with his reflection in the water">
+      <img class="frame" src="frames/s09.jpg" alt="Contact: a big headline on the left, a blood moon on the right, and the samurai facing the viewer on the slab in red mist, reflected in the water">
       <div class="notes">
-        <div><h4>Frame</h4><p>The same slab as shot 01, now under a blood moon whose light streams toward the viewer. For the first time he has turned to face us. The headline gets the left two-thirds and he stands in the moon.</p></div>
+        <div><h4>Frame</h4><p>The same slab as shot 01, now under a blood moon, with red mist on the water and red dust in the air. For the first time he has turned to face us. The headline gets the left two-thirds and he stands in the moon.</p></div>
         <div><h4>Payoff</h4><p>Hovering the email makes his hand move to the hilt (anticipation). Clicking plays a red slash across the address, then opens the mail app. You came in on a draw, and you leave on the promise of one.</p></div>
         <div><h4>Footer</h4><p>When the footer appears he bows (rei) once. "Back to top" plays the camera path in reverse at 4× speed: the moon returns to white and he is back in his stance.</p></div>
       </div>
@@ -326,9 +322,10 @@
     <table style="margin-top:30px">
       <tr><th>Element</th><th>Treatment</th></tr>
       <tr><td>Key light</td><td>The moon is the only real light. It is always behind the subject, so silhouettes and rim light do the work. The fill is a faint cool bounce from the water.</td></tr>
-      <tr><td>Water</td><td>A true mirror under a dark veil, with slow ripple rings. It doubles the moon and the figure in every wide shot and anchors the "one world" feel.</td></tr>
-      <tr><td>Post</td><td>Soft bloom (seams, moon and blade only), a light vignette, constant fine film grain and ACES tone mapping. Chromatic aberration only during the cut.</td></tr>
-      <tr><td>Type and UI</td><td>Unchanged from today: Geist, Geist Mono and Noto Serif JP for kanji. The UI sits on the left over the darkest part of each frame. Every shot is composed with the subject on the right.</td></tr>
+      <tr><td>Water</td><td>A real mirror broken up by two layers of ripple normals and slow rings spreading from his feet. The reflection blurs and fades with distance, the way real water does, and doubles the moon and the figure in every wide shot.</td></tr>
+      <tr><td>Atmosphere</td><td>Ten layers of noise mist lying on the water. Dust motes that brighten when they're backlit by the moon (forward scattering), with near ones going soft and out of focus. Light shafts from the moon are cast only where his silhouette breaks the disc.</td></tr>
+      <tr><td>Post</td><td>Depth of field on every shot, soft bloom (seams, moon, lanterns), a light vignette, constant fine film grain and ACES tone mapping. Chromatic aberration only during the cut.</td></tr>
+      <tr><td>Type and UI</td><td>Unchanged from today: Geist and Geist Mono. Kanji appear only as the small section labels (人 道 戦 武 連), never in the 3D scene. The UI sits on the left over the darkest part of each frame, and every shot puts the subject on the right.</td></tr>
       <tr><td>Light mode</td><td>To be decided. The proposal is a pale dawn: a mist-white sky, an ink-black silhouette and a grey moon. It is the same world with a different lighting preset, not a separate design.</td></tr>
     </table>
   </section>
@@ -339,7 +336,8 @@
       <tr><th>Layer</th><th>Plan</th></tr>
       <tr><td>3D</td><td>three.js through React Three Fiber and drei, inside the current Next.js 16 app. Static export to GitHub Pages still works.</td></tr>
       <tr><td>Camera</td><td>One master GSAP ScrollTrigger timeline over Lenis, which the site already uses. Each shot is a labelled range with its camera position, target, lens and roll. Character clips are scrubbed by the same timeline.</td></tr>
-      <tr><td>Character</td><td>A rigged glTF with the eight clips above, played through an AnimationMixer and scrubbed by scroll where marked. Seams are an emissive material on thin mesh strips, part of the model.</td></tr>
+      <tr><td>Character</td><td>A rigged glTF with the eight clips above, played through an AnimationMixer and scrubbed by scroll where marked. Seams are an emissive material on thin mesh strips, part of the model. In the previz, the body is three.js's Xbot mannequin with armour built in code (<code>design/previz/samurai.js</code>), as a stand-in for the commissioned model.</td></tr>
+      <tr><td>Realism</td><td>The biggest step up from these frames is the sculpted model with baked textures. After that: soft shadows, contact shadows, real-time reflections, mist, dust and light shafts, which are all in the previz already, and on mobile a cheaper tier with lower-resolution reflections and no depth of field.</td></tr>
       <tr><td>Performance</td><td>Sets stream in by distance. Three quality tiers: full, no reflections or bloom, and a static key-frame fallback. Three.js loads after the HTML paints. The scene pauses when the tab is hidden.</td></tr>
       <tr><td>Accessibility</td><td>All content stays as real HTML. With <code>prefers-reduced-motion</code>: no pinning, no camera flights, and each section shows its key frame as a still that cross-fades in.</td></tr>
     </table>
@@ -348,7 +346,7 @@
   <section>
     <p class="label"><span class="k">問</span>Decisions for you</p>
     <ol class="q">
-      <li><b>Character source.</b> Commission a modeller and animator for the samurai and the eight clips (best result, needs budget and a brief), adapt a licensed asset plus mocap clips (faster, less unique), or model it ourselves in Blender (slowest)?</li>
+      <li><b>Character source.</b> This decides how real it looks. Commission a 3D artist to sculpt and rig the armoured samurai and animate the eight clips (best result; I can write the brief), adapt a paid marketplace samurai with mocap clips (faster, less unique), or build it ourselves in Blender (slowest)?</li>
       <li><b>Ending.</b> Should he turn to face the viewer at Contact, or stay in profile and keep the mystery?</li>
       <li><b>Pinned scenes.</b> Four pinned scenes (02, 03, 05, 08) give the most cinematic version. Fewer pins mean less "film" and more "page". Keep all four?</li>
       <li><b>Light mode and sound.</b> Keep light mode as a dawn preset or drop it? Sound in or out?</li>
@@ -356,7 +354,7 @@
     </ol>
   </section>
 
-  <p class="cap" style="margin-top:80px">侍 · biairmal v4 storyboard · draft 02 · frames are previz renders with placeholder geometry (design/previz)</p>
+  <p class="cap" style="margin-top:80px">侍 · biairmal v4 storyboard · draft 03 · real-time previz renders: Xbot mannequin (three.js examples) with procedural armour · design/previz · earlier drafts: draft-01.html, draft-02.html</p>
 </div>
 </body>
 </html>
