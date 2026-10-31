@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ronin · rig and animation test</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Geist+Mono&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; height: 100%; background: #050506; color: #ededed; font-family: Geist, system-ui, sans-serif; overflow: hidden; -webkit-tap-highlight-color: transparent; }
+  canvas { display: block; touch-action: none; }
+  .ui { position: fixed; left: 0; right: 0; pointer-events: none; padding: max(16px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) 0 max(18px, env(safe-area-inset-left)); }
+  .top { top: 0; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .title { font-size: 15px; font-weight: 500; letter-spacing: -.01em; }
+  .sub { font: 11px/1.5 "Geist Mono", monospace; color: #8b8b8b; letter-spacing: .06em; text-transform: uppercase; margin-top: 4px; }
+  .bottom { bottom: 0; top: auto; padding-bottom: max(18px, env(safe-area-inset-bottom)); display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .row { display: flex; gap: 8px; pointer-events: auto; flex-wrap: wrap; justify-content: center; }
+  button { font: 500 13px Geist, system-ui, sans-serif; color: #ededed; background: rgba(20,20,22,.7); border: 1px solid #333; padding: 10px 14px; min-height: 40px; border-radius: 0; backdrop-filter: blur(6px); cursor: pointer; }
+  button[aria-pressed="true"] { background: #ededed; color: #0a0a0a; border-color: #ededed; }
+  .hint { font: 11px "Geist Mono", monospace; color: #6e6e6e; letter-spacing: .08em; text-transform: uppercase; }
+  #load { position: fixed; inset: 0; display: grid; place-items: center; font: 12px "Geist Mono", monospace; letter-spacing: .2em; color: #8b8b8b; }
+  #load b { display: block; width: 180px; height: 1px; background: #222; margin-top: 14px; overflow: hidden; }
+  #load i { display: block; height: 1px; width: 0; background: #ededed; transition: width .2s; }
+  .dot { display: inline-block; width: 6px; height: 6px; background: #c4453f; margin-right: 8px; vertical-align: 1px; }
+  body:not(.night) { background: #dcdcde; color: #111; }
+  body:not(.night) .sub, body:not(.night) .hint, body:not(.night) #load { color: #555; }
+  body:not(.night) button { color: #111; background: rgba(255,255,255,.6); border-color: #b5b5b8; }
+  body:not(.night) button[aria-pressed="true"] { background: #111; color: #eee; border-color: #111; }
+  body:not(.night) #load b { background: #bbb; } body:not(.night) #load i { background: #111; }
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
+</head>
+<body>
+<div id="load"><div style="text-align:center">LOADING MODEL<b><i id="bar"></i></b></div></div>
+<div class="ui top">
+  <div><div class="title"><span class="dot"></span>Ronin: rig and animation test</div><div class="sub" id="clipname">Idle</div></div>
+</div>
+<div class="ui bottom">
+  <div class="row">
+    <button id="bIdle" aria-pressed="true">Idle</button>
+    <button id="bIai" aria-pressed="false">Draw &amp; cut</button>
+    <button id="bSlow" aria-pressed="false">Slow-mo</button>
+    <button id="bSpin" aria-pressed="false">Spin</button>
+    <button id="bLight" aria-pressed="false">Moonlight</button>
+    <button id="bReset">Reset view</button>
+  </div>
+  <div class="hint">Drag to rotate · Pinch to zoom · Two fingers to pan</div>
+</div>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+document.body.prepend(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xdcdcde);
+scene.fog = new THREE.Fog(0xdcdcde, 6, 14);
+const camera = new THREE.PerspectiveCamera(30, innerWidth / innerHeight, 0.01, 60);
+const TARGET = new THREE.Vector3(0, 0.95, 0);
+const HOME = new THREE.Vector3(1.4, 1.25, 3.6).multiplyScalar(innerWidth < innerHeight ? 1.45 : 1);
+const CLOSE = new THREE.Vector3(0.45, 0.07, 1.15).multiplyScalar(innerWidth < innerHeight ? 1.5 : 1).add(new THREE.Vector3(0, 1.55, 0));
+camera.position.copy(HOME);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.copy(TARGET);
+controls.enableDamping = true; controls.minDistance = 0.5; controls.maxDistance = 9; controls.maxPolarAngle = Math.PI * 0.55;
+controls.autoRotate = false; controls.autoRotateSpeed = 1.2;
+
+// studio reflections: soft boxes the lacquer can mirror
+function studioEnv(moon) {
+  const es = new THREE.Scene();
+  es.add(new THREE.Mesh(new THREE.SphereGeometry(10, 32, 16), new THREE.MeshBasicMaterial({ color: moon ? 0x020306 : 0x07080a, side: THREE.BackSide })));
+  const box = (w, h, pos, c) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: c, side: THREE.DoubleSide })); m.position.copy(pos); m.lookAt(0, 0, 0); es.add(m); };
+  if (moon) { box(2.2, 2.2, new THREE.Vector3(-4, 3, -6), 0xdfe8ff); box(6, 0.4, new THREE.Vector3(0, -3, 6), 0x1a2030); }
+  else { box(4, 3, new THREE.Vector3(-5, 4, 5), 0xffffff); box(3, 5, new THREE.Vector3(6, 2, -3), 0xcfd8ff); box(8, 0.6, new THREE.Vector3(0, 7, 0), 0x777777); box(6, 1, new THREE.Vector3(0, -4, 4), 0x222222); }
+  return new THREE.PMREMGenerator(renderer).fromScene(es, 0.02).texture;
+}
+const envs = { studio: studioEnv(false), moon: studioEnv(true) };
+scene.environment = envs.studio;
+
+const key = new THREE.DirectionalLight(0xfff6ee, 2.6); key.position.set(-1, 1.6, 1.5); scene.add(key);
+const rim = new THREE.DirectionalLight(0xdbe6ff, 3.0); rim.position.set(1.2, 1, -1.4); scene.add(rim);
+const rim2 = new THREE.DirectionalLight(0xdbe6ff, 1.5); rim2.position.set(-1.4, 0.6, -1); scene.add(rim2);
+const amb = new THREE.HemisphereLight(0x8a8c92, 0x202022, 1.0); scene.add(amb);
+
+// materials, rebuilt by name for the web
+const MATS = {
+  lacquer_black: new THREE.MeshPhysicalMaterial({ color: 0x050506, roughness: 0.32, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.06, envMapIntensity: 1.1 }),
+  lacquer_red: new THREE.MeshPhysicalMaterial({ color: 0x7a1410, roughness: 0.35, clearcoat: 1, clearcoatRoughness: 0.08, envMapIntensity: 1.0 }),
+  silk: new THREE.MeshPhysicalMaterial({ color: 0xc9c5bd, roughness: 0.6, sheen: 1, sheenRoughness: 0.35, sheenColor: new THREE.Color(0xffffff), envMapIntensity: 0.6 }),
+  horsehair: new THREE.MeshPhysicalMaterial({ color: 0xe2e0db, roughness: 0.4, sheen: 0.6, sheenColor: new THREE.Color(0xffffff), envMapIntensity: 0.7 }),
+  iron: new THREE.MeshStandardMaterial({ color: 0x2a2928, metalness: 1, roughness: 0.42 }),
+  cloth_vest: new THREE.MeshPhysicalMaterial({ color: 0x0b0b0c, roughness: 0.92, sheen: 0.3, sheenColor: new THREE.Color(0x2a2b30), envMapIntensity: 0.3 }),
+  cloth_kimono: new THREE.MeshPhysicalMaterial({ color: 0x17171a, roughness: 0.9, sheen: 0.3, sheenColor: new THREE.Color(0x30323a), envMapIntensity: 0.3 }),
+  cloth_under: new THREE.MeshStandardMaterial({ color: 0x3a3a3e, roughness: 0.9 }),
+  cloth_trousers: new THREE.MeshStandardMaterial({ color: 0x0a0a0b, roughness: 0.92 }),
+  cloth_wraps: new THREE.MeshStandardMaterial({ color: 0x18171a, roughness: 0.95 }),
+  cloth_obi: new THREE.MeshStandardMaterial({ color: 0x101012, roughness: 0.9 }),
+  rope: new THREE.MeshStandardMaterial({ color: 0x3a3836, roughness: 0.95 }),
+  bead_dark: new THREE.MeshPhysicalMaterial({ color: 0x0a0a0b, roughness: 0.25, clearcoat: 1 }),
+  bead_light: new THREE.MeshPhysicalMaterial({ color: 0x9a9a9c, roughness: 0.3, clearcoat: 1 }),
+  kasa_lacquer: new THREE.MeshPhysicalMaterial({ color: 0x0e0e10, roughness: 0.45, clearcoat: 0.8, clearcoatRoughness: 0.2, envMapIntensity: 0.7 }),
+  ito_wrap: new THREE.MeshStandardMaterial({ color: 0x1a1a1c, roughness: 0.75 }),
+  blade_steel: new THREE.MeshPhysicalMaterial({ color: 0xd9dde3, metalness: 1, roughness: 0.12, envMapIntensity: 1.6 }),
+  fabric_hakama: new THREE.MeshPhysicalMaterial({ color: 0x0b0b0c, roughness: 0.9, sheen: 0.4, sheenColor: new THREE.Color(0x3a3c42), sheenRoughness: 0.6, envMapIntensity: 0.4 }),
+  fabric_sleeve: new THREE.MeshPhysicalMaterial({ color: 0x141416, roughness: 0.88, sheen: 0.5, sheenColor: new THREE.Color(0x4a4c52), envMapIntensity: 0.4 }),
+  fabric_glove: new THREE.MeshStandardMaterial({ color: 0x101011, roughness: 0.9 }),
+  hood: new THREE.MeshStandardMaterial({ color: 0x0c0c0e, roughness: 0.95 }),
+  straw_kasa: new THREE.MeshPhysicalMaterial({ color: 0x1c1915, roughness: 0.75, clearcoat: 0.4, clearcoatRoughness: 0.3, envMapIntensity: 0.6 }),
+  seam_light: new THREE.MeshBasicMaterial({ color: 0xeaf2ff }),
+  wood_sandal: new THREE.MeshStandardMaterial({ color: 0x1a1612, roughness: 0.85 }),
+};
+
+// ground: a soft dark disc that catches reflections
+const ground = new THREE.Mesh(new THREE.CircleGeometry(20, 64), new THREE.MeshStandardMaterial({ color: 0xcfcfd1, roughness: 0.9 }));
+ground.rotation.x = -Math.PI / 2; scene.add(ground);
+const bar = document.getElementById('bar');
+(async () => {
+  bar.style.width = '35%';
+  const b64 = (await import('./model.js')).default;
+  bar.style.width = '75%';
+  const bin = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+  new GLTFLoader().parse(bin.buffer, '', (g) => {
+    g.scene.traverse((o) => {
+      if (o.isMesh) {
+        const n = o.material.name;
+        o.material = MATS[n.replace(/\.\d+$/, '')] || (n.includes('red') ? MATS.lacquer_red : n.includes('silk') ? MATS.silk : n.includes('hair') ? MATS.horsehair : n.includes('iron') ? MATS.iron : MATS.lacquer_black);
+        o.material.side = THREE.DoubleSide;
+      }
+    });
+    g.scene.traverse((o) => { if (o.isSkinnedMesh) o.frustumCulled = false; });
+    scene.add(g.scene);
+    setupAnim(g);
+    document.getElementById('load').remove();
+    window.__ready = true;
+  }, (err) => { document.getElementById('load').textContent = 'Could not load the model.'; console.error(err); });
+})();
+
+const toggle = (id, fn) => { const b = document.getElementById(id); b.addEventListener('click', () => { const v = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', v); fn(v); }); };
+let mixer, actions = {}, current, slow = false;
+const clock = new THREE.Clock();
+function setupAnim(g) {
+  mixer = new THREE.AnimationMixer(g.scene);
+  for (const c of g.animations) actions[c.name] = mixer.clipAction(c);
+  actions.iai.setLoop(THREE.LoopOnce); actions.iai.clampWhenFinished = true;
+  mixer.addEventListener('finished', (e) => { if (e.action === actions.iai) setTimeout(() => current === actions.iai && play('idle'), 900); });
+  play('idle');
+  window.__mixer = mixer; window.__actions = actions; window.__cam = camera; window.__controls = controls;
+}
+function play(name) {
+  const next = actions[name]; if (!next) return;
+  next.reset().setEffectiveWeight(1).play();
+  if (current && current !== next) current.crossFadeTo(next, 0.35, false);
+  current = next;
+  document.getElementById('bIdle').setAttribute('aria-pressed', name === 'idle');
+  document.getElementById('bIai').setAttribute('aria-pressed', name === 'iai');
+  document.getElementById('clipname').textContent = name === 'iai' ? 'Iai: draw, cut, cut, flick, sheathe' : 'Idle';
+}
+document.getElementById('bIdle').addEventListener('click', () => play('idle'));
+document.getElementById('bIai').addEventListener('click', () => play('iai'));
+toggle('bSlow', (v) => { slow = v; });
+toggle('bSpin', (v) => controls.autoRotate = v);
+toggle('bLight', (v) => {
+  document.body.classList.toggle('night', v);
+  scene.background.set(v ? 0x050506 : 0xdcdcde); scene.fog.color.set(v ? 0x050506 : 0xdcdcde); ground.material.color.set(v ? 0x060607 : 0xcfcfd1);
+  scene.environment = v ? envs.moon : envs.studio;
+  key.intensity = v ? 0.15 : 2.6; rim.intensity = v ? 4.5 : 3.0; rim2.intensity = v ? 0.6 : 1.5; amb.intensity = v ? 0.15 : 1.0;
+});
+document.getElementById('bReset').addEventListener('click', () => { camera.position.copy(HOME); controls.target.copy(TARGET); });
+
+addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+renderer.setAnimationLoop(() => { const dt = clock.getDelta(); if (mixer) mixer.update(dt * (slow ? 0.3 : 1)); controls.update(); renderer.render(scene, camera); });
+</script>
+</body>
+</html>

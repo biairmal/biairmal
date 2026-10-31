@@ -30,3 +30,17 @@ python3 -c "import base64;open('viewer/model.js','w').write('export default \"'+
 ```
 
 Artifacts can't serve `.glb` files, so the model ships inside `model.js` as base64. That file is git-ignored.
+
+## Rig and animation
+
+`rig.py` opens the cloth-simulated `ronin.blend` and adds:
+- a katana blade, hidden in the saya at rest
+- a skeleton: spine, arms, legs, a katana bone and a saya bone
+- skin weights computed from distance to the bones, per body region
+- IK hands and feet
+
+It keys two clips per frame from pose keys, bakes the IK into plain bone rotations and exports `ronin_rigged.glb`:
+- `idle` (4 s loop)
+- `iai` (6.2 s): koiguchi → draw with saya-biki and a step → horizontal cut → zanshin → furikaburi → downward cut → chiburi → nōtō
+
+Run: `bl/bin/python rig.py` (about 15 s). For the web the export goes through `weld → simplify 0.45 → resample → quantize → dedup → prune`, about 8.5 MB. Viewer in `viewer-rig/`.
