@@ -59,7 +59,7 @@ def fabric(name, col, pattern=0.0, sheen=0.25, rough=0.9, weave=700):
 VEST = fabric('cloth_vest', (0.006, 0.006, 0.007), 0.35, 0.12)
 KIMONO = fabric('cloth_kimono', (0.016, 0.016, 0.018), 0.0, 0.15, 0.85, 900)
 UNDER = fabric('cloth_under', (0.06, 0.06, 0.064), 0.0, 0.15, 0.85, 1100)
-TROUSER = fabric('cloth_trousers', (0.005, 0.005, 0.006), 0.0, 0.1)
+TROUSER = fabric('cloth_trousers', (0.022, 0.022, 0.024), 0.0, 0.1)
 WRAP = fabric('cloth_wraps', (0.014, 0.013, 0.013), 0.0, 0.1, 0.92, 1400)
 ROPE = fabric('rope', (0.05, 0.048, 0.045), 0.0, 0.1, 0.95, 300)
 OBI = fabric('cloth_obi', (0.01, 0.01, 0.011), 0.25, 0.1)
@@ -116,6 +116,30 @@ def grid_obj(name, F, us, zs, mats, keep=None, closed=False):
     bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context='VERTS')
     return new_obj(name, bm, mats)
 lin = lambda a, b, n: [a + (b - a) * k / n for k in range(n + 1)]
+CLOTH = []      # (object, pin weight function or vertex index set, thickness, material settings)
+COLLIDERS = []
+def catmull(pts, n):
+    P = [pts[0]] + list(pts) + [pts[-1]]; out = []
+    for i in range(1, len(P) - 2):
+        p0, p1, p2, p3 = P[i - 1], P[i], P[i + 1], P[i + 2]
+        for k in range(n):
+            t = k / n
+            out.append(0.5 * ((2 * p1) + (-p0 + p2) * t + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t * t + (-p0 + 3 * p1 - 3 * p2 + p3) * t ** 3))
+    out.append(pts[-1]); return out
+def mesh_tube(name, pts, radii, mat, ring=36, seg=14, open_ends=True):
+    path = catmull([Vector(p) for p in pts], seg); M = len(path)
+    rad = [radii[min(len(radii) - 1, int(k / (M - 1) * (len(radii) - 1)))] * (1 - ((k / (M - 1) * (len(radii) - 1)) % 1)) +
+           radii[min(len(radii) - 1, int(k / (M - 1) * (len(radii) - 1)) + 1)] * ((k / (M - 1) * (len(radii) - 1)) % 1) for k in range(M)]
+    bm = bmesh.new(); rings = []
+    T0 = (path[1] - path[0]).normalized(); N = T0.cross(Vector((0.0, 0.3, 1.0))).normalized()
+    for k in range(M):
+        T = (path[min(k + 1, M - 1)] - path[max(k - 1, 0)]).normalized()
+        N = (N - T * N.dot(T)).normalized(); B = T.cross(N)
+        rings.append([bm.verts.new(path[k] + (N * math.cos(a) + B * math.sin(a)) * rad[k]) for a in [TAU * q / ring for q in range(ring)]])
+    for k in range(M - 1):
+        for q in range(ring): bm.faces.new((rings[k][q], rings[k][(q + 1) % ring], rings[k + 1][(q + 1) % ring], rings[k + 1][q]))
+    o = new_obj(name, bm, [mat])
+    return o, ring, M
 TAU = 2 * math.pi
 
 # ---------------------------------------------------------------- body shell (under-kimono torso)
@@ -146,10 +170,9 @@ def vest_keep(u, z):
     if abs(a) < 0.16 + 0.32 * smooth((1.0 - z) / 0.2) - 0.08 * smooth((z - 1.3) / 0.15): return False   # open front
     if z < 0.86 and abs(abs(a) - math.pi / 2) < 0.035: return False        # side slits
     if z < hem(u): return False
-    if z < hem(u) + 0.05 and n3(u * 30, z * 30, 2.0) > 0.25: return False   # torn notches along the hem
     return True
-vest = grid_obj('vest', torso_P(0.022, 0.13, 0.98), lin(0, TAU, 140)[:-1], lin(1.5, 0.52, 80), [VEST], vest_keep, closed=True)
-solid(vest, 0.004, 1); wrinkles(vest, 0.007, 0.07)
+vest = grid_obj('vest', torso_P(0.022, 0.26, 0.98), lin(0, TAU, 180)[:-1], lin(1.5, 0.5, 110), [VEST], vest_keep, closed=True)
+CLOTH.append((vest, lambda v, i: 1.0 if v.co.z > 0.9 else 0.0, 0.004))
 # hood / cowl rolled around the neck
 tube('cowl', [Vector((0.075 * math.sin(u), -0.06 * math.cos(u) + 0.01, 1.505 + 0.012 * math.cos(u))) for u in lin(0.5, TAU - 0.5, 10)], [0.028] * 11, VEST, 8, True)
 # a light seam along the vest's front edges (the digital hairline)
@@ -196,8 +219,10 @@ tube('pouch_tie', [pp + Vector((0, 0, 0.07)), pp + Vector((0.005, -0.01, 0.12))]
 LEG = {s: (Vector((s * 0.1, 0.0, 0.92)), Vector((s * 0.135, -0.02, 0.5)), Vector((s * 0.14, 0.0, 0.08))) for s in (-1, 1)}
 for s, (hip, knee, ank) in LEG.items():
     # loose trousers to below the knee, gathered into the wraps
-    pts = [hip, hip.lerp(knee, 0.5), knee, knee.lerp(ank, 0.25)]
-    tr = tube('trousers', pts, [0.105, 0.1, 0.085, 0.06], TROUSER, 12)
+    pts = [hip + Vector((0, 0, 0.04)), hip.lerp(knee, 0.5), knee, knee.lerp(ank, 0.22)]
+    tr, rq, rm = mesh_tube('trousers', pts, [0.11, 0.122, 0.115, 0.058], TROUSER, 40, 12)
+    CLOTH.append((tr, (lambda rq, rm: lambda v, i: 1.0 if (i < rq * 3 or i >= rq * (rm - 2)) else 0.0)(rq, rm), 0.003))
+    col, _, _ = mesh_tube('collider_leg', [hip, knee, ank + Vector((0, 0, 0.05))], [0.085, 0.068, 0.05], TROUSER, 16, 6); COLLIDERS.append(col)
     # kyahan: spiral-wrapped shins
     tube('shin', [knee.lerp(ank, 0.15), knee.lerp(ank, 0.6), ank + Vector((0, 0, 0.03))], [0.057, 0.05, 0.045], WRAP, 10)
     for k in range(9):
@@ -219,9 +244,10 @@ ARM = {'R': (Vector((-0.2, 0.0, 1.43)), Vector((-0.245, 0.02, 1.16)), Vector((-0
 for side, (sh, el, wr) in ARM.items():
     sx = 1 if side == 'L' else -1
     # kimono sleeve: a wide bag hanging from the arm, open at the cuff
-    pts = [sh, sh.lerp(el, 0.5), el, el.lerp(wr, 0.35)]
-    tube('sleeve', pts, [0.07, 0.078, 0.082, 0.08], KIMONO, 12)
-    bag = tube('sleeve_bag', [el + Vector((0, 0.02, -0.02)), el.lerp(wr, 0.3) + Vector((0, 0.05, -0.06)), el.lerp(wr, 0.45) + Vector((0, 0.06, -0.12))], [0.07, 0.07, 0.04], KIMONO, 10)
+    pts = [sh + Vector((-sx * 0.02, 0, 0.0)), sh.lerp(el, 0.5), el, el.lerp(wr, 0.36)]
+    sl, rq, rm = mesh_tube('sleeve', pts, [0.075, 0.1, 0.115, 0.048], KIMONO, 40, 12)
+    CLOTH.append((sl, (lambda rq, rm: lambda v, i: 1.0 if (i < rq * 3 or i >= rq * (rm - 2)) else 0.0)(rq, rm), 0.003))
+    col, _, _ = mesh_tube('collider_arm', [sh, el, wr], [0.05, 0.045, 0.036], KIMONO, 16, 6); COLLIDERS.append(col)
     # forearm wraps
     fa0 = el.lerp(wr, 0.32); d = (wr - fa0).normalized()
     side_v = d.cross(Vector((0, 0, 1))).normalized(); up_v = side_v.cross(d)
@@ -291,6 +317,66 @@ def sword(name, mouth, direction, L_saya, L_tsuka, sc=1.0):
         tube(name + '_tassel', [tip, tip + Vector((R.uniform(-0.008, 0.008), R.uniform(-0.008, 0.008), -0.05))], [0.0012, 0.0012], SILK, 4, True)
 sword('katana', torso_P(0.06, 0, 0)(0.95, 0.99) + Vector((0, -0.01, 0)), Vector((0.14, 0.84, -0.52)), 0.78, 0.26)
 sword('wakizashi', torso_P(0.06, 0, 0)(0.75, 1.02) + Vector((0, -0.01, 0)), Vector((0.16, 0.86, -0.46)), 0.52, 0.17, 0.9)
+
+# ---------------------------------------------------------------- cloth simulation
+def make_collider(c, thick=0.006):
+    c.modifiers.new('collision', 'COLLISION'); c.collision.thickness_outer = thick; c.collision.cloth_friction = 8
+
+def run_cloth(items, collection_for, frames):
+    for o, pin, th in items:
+        vg = o.vertex_groups.new(name='pin')
+        for i, v in enumerate(o.data.vertices):
+            w = pin(v, i)
+            if w > 0: vg.add([i], w, 'REPLACE')
+        cm = o.modifiers.new('Cloth', 'CLOTH'); st = cm.settings
+        st.quality = 10; st.mass = 0.25; st.air_damping = 2.0
+        st.tension_stiffness = st.compression_stiffness = 12; st.shear_stiffness = 6; st.bending_stiffness = 0.15
+        st.vertex_group_mass = 'pin'; st.pin_stiffness = 1.0
+        cs = cm.collision_settings; cs.distance_min = 0.004; cs.collision_quality = 3; cs.use_self_collision = False
+        cs.collection = collection_for(o)
+        cm.point_cache.frame_start = 1; cm.point_cache.frame_end = frames
+    scene.frame_start, scene.frame_end = 1, frames
+    for f in range(1, frames + 1):
+        scene.frame_set(f)
+    dg = bpy.context.evaluated_depsgraph_get()
+    for o, pin, th in items:     # freeze the draped shape
+        me = bpy.data.meshes.new_from_object(o.evaluated_get(dg))
+        old = o.data; o.modifiers.clear(); o.data = me; bpy.data.meshes.remove(old)
+        for p in me.polygons: p.use_smooth = True
+        o.vertex_groups.clear()
+    scene.frame_set(1)
+
+def simulate(frames=int(os.environ.get('CLOTH_FRAMES', 60))):
+    def coll(name, objs):
+        c = bpy.data.collections.new(name); scene.collection.children.link(c)
+        for o in objs: c.objects.link(o)
+        return c
+    for c in COLLIDERS + [kimono]: make_collider(c)
+    legs = coll('leg_colliders', [c for c in COLLIDERS if c.name.startswith('collider_leg')] + [kimono])
+    arms = coll('arm_colliders', [c for c in COLLIDERS if c.name.startswith('collider_arm')])
+    first = [it for it in CLOTH if not it[0].name.startswith('vest')]
+    coat = [it for it in CLOTH if it[0].name.startswith('vest')]
+    run_cloth(first, lambda o: arms if o.name.startswith('sleeve') else legs, frames)
+    print('cloth: trousers and sleeves done', flush=True)
+    trousers = [it[0] for it in first if it[0].name.startswith('trousers')]
+    for t in trousers: make_collider(t, 0.008)
+    over = coll('coat_colliders', trousers + [kimono])
+    run_cloth(coat, lambda o: over, frames)
+    print('cloth: coat done', flush=True)
+    for o, pin, th in CLOTH:
+        for m in list(o.modifiers):
+            if m.type == 'COLLISION': o.modifiers.remove(m)
+        solid(o, th, 1)
+        sm = o.modifiers['solid']; sm.use_even_offset = False; sm.thickness_clamp = 0.5; sm.use_quality_normals = True
+    for c in COLLIDERS: bpy.data.objects.remove(c)
+    for m in list(kimono.modifiers):
+        if m.type == 'COLLISION': kimono.modifiers.remove(m)
+if os.environ.get('NO_CLOTH'):
+    for o, pin, th in CLOTH: solid(o, th, 1)
+    for c in COLLIDERS: bpy.data.objects.remove(c)
+else:
+    simulate()
+scene.frame_set(scene.frame_end)
 
 # ---------------------------------------------------------------- export / render
 os.makedirs(OUT, exist_ok=True)
