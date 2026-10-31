@@ -265,7 +265,8 @@ def lame(idx):
             bmesh.ops.transform(bm, matrix=M, verts=res['verts'])
     lo = obj_from_bm(f'yodare_lace_{idx}', bm, [SILK])
     return o, lo
-for i in range(3): lame(i)
+if not os.environ.get('NO_YODARE'):
+    for i in range(3): lame(i)
 
 # ------------------------------------------------------------ hooded head (context only)
 cloth = bpy.data.materials.new('hood'); cloth.use_nodes = True
