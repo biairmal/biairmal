@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>biairmal v4 · Storyboard</title>
+<style>
+  :root {
+    --bg: #0a0a0a; --fg: #ededed; --muted: #9a9a9a; --faint: #6b6b6b;
+    --line: rgba(237,237,237,.12); --moon: #e8e4dc; --blood: #c4453f;
+    --mono: ui-monospace, "SFMono-Regular", "Geist Mono", Menlo, Consolas, monospace;
+    --sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --jp: "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.6 var(--sans); }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 56px 28px 96px; }
+  .label { font: 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--faint); display: flex; gap: 10px; align-items: center; }
+  .label .k { font: 16px/1 var(--jp); color: var(--fg); letter-spacing: 0; }
+  .dot { width: 6px; height: 6px; background: var(--blood); display: inline-block; }
+  h1 { font-size: clamp(36px, 6vw, 72px); line-height: 1.04; letter-spacing: -.045em; font-weight: 500; margin: 18px 0 18px; }
+  h2 { font-size: clamp(26px, 3.4vw, 40px); letter-spacing: -.035em; font-weight: 500; margin: 0 0 8px; line-height: 1.1; }
+  h3 { font-size: 22px; letter-spacing: -.02em; font-weight: 500; margin: 0; }
+  p { margin: 0 0 12px; }
+  .muted { color: var(--muted); }
+  .lede { max-width: 720px; color: var(--muted); font-size: 17px; }
+  section { margin-top: 88px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); margin-top: 28px; }
+  .grid3 > div { background: var(--bg); padding: 22px; }
+  .grid3 b { display: block; font-weight: 500; margin-bottom: 6px; }
+  .grid3 span { color: var(--muted); font-size: 14px; }
+
+  /* arc strip */
+  .arc { display: grid; grid-template-columns: repeat(10, 1fr); margin-top: 28px; border-top: 1px solid var(--line); }
+  .arc div { padding: 12px 6px 0 0; font: 11px/1.4 var(--mono); color: var(--faint); position: relative; }
+  .arc div::before { content: ""; position: absolute; top: -5px; left: 0; width: 9px; height: 9px; transform: rotate(45deg); border: 1px solid var(--fg); background: var(--bg); }
+  .arc div.r::before { border-color: var(--blood); background: var(--blood); }
+  .arc b { display: block; color: var(--fg); font-weight: 400; font-family: var(--jp); font-size: 15px; margin: 6px 0 2px; }
+
+  /* frames */
+  .shot { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 32px; padding: 36px 0; border-top: 1px solid var(--line); align-items: start; }
+  .panel { position: relative; aspect-ratio: 16 / 9; background: #050505; border: 1px solid var(--line); overflow: hidden; }
+  .panel svg { display: block; width: 100%; height: 100%; }
+  .panel .tc { position: absolute; left: 10px; top: 8px; font: 10px/1 var(--mono); color: var(--faint); letter-spacing: .08em; }
+  .panel .tc2 { position: absolute; right: 10px; top: 8px; font: 10px/1 var(--mono); color: var(--faint); letter-spacing: .08em; }
+  .head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 4px; }
+  .num { font: 12px/1 var(--mono); color: var(--faint); }
+  .kanji { font: 22px/1 var(--jp); }
+  .scroll { font: 11px/1 var(--mono); color: var(--faint); letter-spacing: .06em; margin: 8px 0 16px; text-transform: uppercase; }
+  dl { margin: 0; display: grid; grid-template-columns: 92px 1fr; border-bottom: 1px solid var(--line); }
+  dt, dd { margin: 0; padding: 9px 0; border-top: 1px solid var(--line); font-size: 14px; }
+  dt { font: 10px/1.9 var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--faint); padding-top: 11px; }
+  dd { color: #cfcfcf; }
+  .tag { display: inline-block; font: 10px/1 var(--mono); padding: 4px 6px; border: 1px solid var(--line); color: var(--muted); margin-right: 4px; }
+  .tag.new { border-color: rgba(196,69,63,.5); color: #e08c87; }
+
+  table { width: 100%; border-collapse: collapse; margin-top: 24px; font-size: 14px; }
+  th, td { text-align: left; padding: 12px 14px 12px 0; border-top: 1px solid var(--line); vertical-align: top; }
+  th { font: 10px/1.6 var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--faint); font-weight: 400; }
+  td:first-child { white-space: nowrap; }
+  td { color: #cfcfcf; }
+  ol.q { padding-left: 20px; } ol.q li { margin-bottom: 10px; color: #cfcfcf; } ol.q b { color: var(--fg); font-weight: 500; }
+
+  @media (max-width: 860px) {
+    .shot { grid-template-columns: 1fr; gap: 18px; }
+    .grid3 { grid-template-columns: 1fr; }
+    .arc { grid-template-columns: repeat(5, 1fr); row-gap: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- shared drawing parts -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <pattern id="dots" width="3" height="3" patternUnits="userSpaceOnUse"><circle cx="1.5" cy="1.5" r=".9" fill="#e8e4dc"/></pattern>
+    <pattern id="dotsDim" width="3" height="3" patternUnits="userSpaceOnUse"><circle cx="1.5" cy="1.5" r=".8" fill="#e8e4dc" opacity=".35"/></pattern>
+    <pattern id="dotsRed" width="3" height="3" patternUnits="userSpaceOnUse"><circle cx="1.5" cy="1.5" r=".9" fill="#c4453f"/></pattern>
+    <pattern id="ink" width="2.4" height="2.4" patternUnits="userSpaceOnUse"><circle cx="1.2" cy="1.2" r=".85" fill="#111"/></pattern>
+    <pattern id="inkLight" width="2.4" height="2.4" patternUnits="userSpaceOnUse"><circle cx="1.2" cy="1.2" r=".7" fill="#ededed"/></pattern>
+    <radialGradient id="glow"><stop offset="0" stop-color="#e8e4dc" stop-opacity=".18"/><stop offset="1" stop-color="#e8e4dc" stop-opacity="0"/></radialGradient>
+    <radialGradient id="glowRed"><stop offset="0" stop-color="#c4453f" stop-opacity=".35"/><stop offset="1" stop-color="#c4453f" stop-opacity="0"/></radialGradient>
+    <linearGradient id="water" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8e4dc" stop-opacity=".12"/><stop offset="1" stop-color="#e8e4dc" stop-opacity="0"/></linearGradient>
+    <linearGradient id="fade" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ededed" stop-opacity="0"/><stop offset=".5" stop-color="#ededed"/><stop offset="1" stop-color="#ededed" stop-opacity="0"/></linearGradient>
+    <!-- samurai silhouette, faces right, 60 x 100 -->
+    <symbol id="sam" viewBox="0 0 60 100">
+      <path d="M4 20 L30 6 L56 20 L46 21 L14 21 Z"/>
+      <path d="M23 21 h14 v9 h-14 z"/>
+      <path d="M17 30 Q30 26 43 30 L46 56 L14 56 Z"/>
+      <path d="M14 56 L46 56 L56 98 L36 98 L31 72 L27 98 L4 98 Z"/>
+      <path d="M44 50 L62 44 L62 46 L45 53 Z"/>
+      <path d="M16 52 L-6 60 L-6 62 L17 55 Z"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="wrap">
+
+  <p class="label"><span class="dot"></span>Design phase · v4 · draft 01</p>
+  <h1>Digital samurai,<br>now in three dimensions.</h1>
+  <p class="lede">A storyboard for the next version of biairmal.github.io. The concept and the story stay the same: the dot-particle samurai, the moon, the cut, the dust, the eclipse and the blood moon. v4 puts that story into a real 3D scene that the scroll moves you through like a camera, instead of a flat canvas sitting behind the page.</p>
+
+  <section>
+    <p class="label"><span class="k">心</span>What stays, what changes</p>
+    <div class="grid3">
+      <div><b>Keep</b><span>Dot-particle samurai and moon · moon → crescent → new moon → blood moon arc · kanji section marks (人 道 戦 武 連) · slash and shoji hovers · monochrome with one blood-red accent · Geist + mono + Noto Serif JP · all current copy and content.</span></div>
+      <div><b>Elevate</b><span>A real WebGL scene: about 60k GPU particles with depth, a lit sphere moon with real phases, a water floor with reflections, fog, bloom and film grain. The camera is driven by scroll. The dust re-forms into each section's kanji. The katana cut slices the page itself.</span></div>
+      <div><b>Guard</b><span>Content stays as real HTML (SEO, a11y, NDA text). <code>prefers-reduced-motion</code> and low-end devices fall back to the current 2D canvas. 3D is lazy-loaded after first paint. Target is 60fps on desktop and 30+ on mid-range phones.</span></div>
+    </div>
+  </section>
+
+  <section>
+    <p class="label"><span class="k">流</span>The arc, one scroll</p>
+    <div class="arc">
+      <div>00<b>抜</b>Prologue</div>
+      <div>01<b>構</b>Stance</div>
+      <div>02<b>斬</b>The cut</div>
+      <div>03<b>塵</b>Dust</div>
+      <div>04<b>人</b>About</div>
+      <div>05<b>道</b>Path</div>
+      <div>06<b>戦</b>Work</div>
+      <div>07<b>武</b>Toolkit</div>
+      <div class="r">08<b>蝕</b>Eclipse</div>
+      <div class="r">09<b>連</b>Contact</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Shots</h2>
+    <p class="muted">Each frame is a key pose. Scroll ranges are the share of the whole home page.</p>
+
+    <!-- 00 -->
+    <div class="shot">
+      <div class="panel">
+        <svg viewBox="0 0 320 180">
+          <rect width="320" height="180" fill="#050505"/>
+          <line x1="40" y1="90" x2="280" y2="90" stroke="url(#fade)" stroke-width=".8"/>
+          <line x1="160" y1="90" x2="214" y2="90" stroke="#fff" stroke-width="1.2"/>
+          <text x="160" y="76" fill="#ededed" font-size="16" text-anchor="middle" font-family="serif">侍</text>
+          <text x="160" y="110" fill="#6b6b6b" font-size="6" text-anchor="middle" font-family="monospace" letter-spacing="1.5">064 / 100 · SHARPENING</text>
+          <path d="M160 0 V180" stroke="#ededed" stroke-opacity=".08" stroke-dasharray="2 4"/>
+        </svg>
+        <span class="tc">00 · 0.0 – 1.6s</span><span class="tc2">LOAD</span>
+      </div>
+      <div>
+        <div class="head"><span class="num">00</span><span class="kanji">抜</span><h3>Prologue: the whetstone</h3></div>
+        <p class="scroll">On load · before scroll · <span class="tag new">new</span></p>
+        <dl>
+          <dt>Frame</dt><dd>Black screen. A single hairline, the edge of a blade, slides across the middle as the 3D assets load. A mono counter reads <em>064 / 100 · sharpening</em>, and 侍 sits above it.</dd>
+          <dt>Motion</dt><dd>At 100 the line flashes white and the screen <em>splits open vertically</em> along it, like a sliding door. The two halves pull apart and show the hero behind them, with the moon already glowing.</dd>
+          <dt>Rule</dt><dd>Never longer than 1.6s. If assets are cached it plays as a quick 0.4s cut. Hidden entirely for returning visitors and for reduced motion.</dd>
+        </dl>
+      </div>
+    </div>
+
+    <!-- 01 -->
+    <div class="shot">
+      <div class="panel">
+        <svg viewBox="0 0 320 180">
+          <rect width="320" height="180" fill="#050505"/>
+          <circle cx="215" cy="72" r="78" fill="url(#glow)"/>
+          <circle cx="215" cy="72" r="54" fill="url(#dots)"/>
+          <rect x="0" y="128" width="320" height="52" fill="#070707"/>
+          <ellipse cx="215" cy="150" rx="40" ry="10" fill="url(#water)"/>
+          <line x1="0" y1="128" x2="320" y2="128" stroke="#ededed" stroke-opacity=".12"/>
+          <use href="#sam" x="168" y="58" width="44" height="72" fill="#0b0b0b" stroke="#e8e4dc" stroke-opacity=".35" stroke-width="1.2"/>
+          <use href="#sam" x="168" y="-200" width="44" height="72" fill="#ededed" opacity=".07" transform="scale(1,-1)"/>
+          <rect x="22" y="52" width="88" height="7" fill="#ededed"/>
+          <rect x="22" y="63" width="70" height="7" fill="#ededed"/>
+          <rect x="22" y="78" width="80" height="2" fill="#6b6b6b"/>
+          <rect x="22" y="83" width="64" height="2" fill="#6b6b6b"/>
+          <rect x="22" y="94" width="30" height="9" fill="#ededed"/><rect x="56" y="94" width="30" height="9" fill="none" stroke="#6b6b6b" stroke-width=".6"/>
+          <rect x="22" y="44" width="2" height="2" fill="#c4453f"/>
+          <g stroke="#ededed" stroke-opacity=".35" stroke-width=".6"><path d="M120 30 l3 1"/><path d="M290 110 l3 1"/><path d="M140 140 l3 1"/><path d="M270 20 l3 1"/><path d="M60 150 l3 1"/></g>
+                  </svg>
+        <span class="tc">01 · HERO</span><span class="tc2">0 – 8%</span>
+      </div>
+      <div>
+        <div class="head"><span class="num">01</span><span class="kanji">構</span><h3>Stance: iai on still water</h3></div>
+        <p class="scroll">Scroll 0 – 8% · camera low, 3° up-tilt</p>
+        <dl>
+          <dt>3D</dt><dd>The samurai is a volume of particles with depth, not a flat mask, so it reads from slight angles. It stands on a dark mirror-water plane that reflects it and the moon. The moon is a lit sphere with dot shading and a soft bloom halo. Ash drifts in three depth layers.</dd>
+          <dt>Motion</dt><dd>Idle "breathing": the hakama and the hat cord move in wind (curl noise). Slow ripples cross the water. The headline reveals line by line through a diagonal slash mask.</dd>
+          <dt>Pointer</dt><dd>The camera orbits ±6° toward the cursor (parallax), and particles near the cursor scatter into ash and re-form, as they do today but now in 3D. The cursor is a small hairline reticle that stretches into a short blade stroke when it moves fast.</dd>
+          <dt>UI</dt><dd>Same copy, layout and CTAs. The 一刀両断 vertical rail stays. "Scroll to draw" becomes a tiny hilt icon that slides out of its sheath as you begin to scroll.</dd>
+        </dl>
+      </div>
+    </div>
+
+    <!-- 02 -->
+    <div class="shot">
+      <div class="panel">
+        <svg viewBox="0 0 320 180">
+          <rect width="320" height="180" fill="#050505"/>
+          <g transform="translate(-6,-4)">
+            <path d="M0 0 H320 V58 L0 132 Z" fill="#0b0b0b"/>
+            <circle cx="215" cy="72" r="54" fill="url(#dots)" clip-path="url(#ctop)"/>
+          </g>
+          <clipPath id="ctop"><path d="M0 0 H320 V58 L0 132 Z"/></clipPath>
+          <clipPath id="cbot"><path d="M0 132 L320 58 V180 H0 Z"/></clipPath>
+          <g transform="translate(6,4)">
+            <circle cx="215" cy="72" r="54" fill="url(#dotsDim)" clip-path="url(#cbot)"/>
+          </g>
+          <use href="#sam" x="150" y="56" width="50" height="80" fill="#0b0b0b" stroke="#e8e4dc" stroke-opacity=".35" stroke-width="1.2"/>
+          <line x1="-10" y1="136" x2="330" y2="58" stroke="#fff" stroke-width="1.6"/>
+          <line x1="-10" y1="136" x2="330" y2="58" stroke="#fff" stroke-width="6" stroke-opacity=".12"/>
+          <line x1="-10" y1="137.5" x2="330" y2="59.5" stroke="#c4453f" stroke-width=".5" stroke-opacity=".8"/>
+          <text x="20" y="168" fill="#6b6b6b" font-size="6" font-family="monospace" letter-spacing="1.2">TIME ×0.25 · CHROMATIC SPIKE · 1 FRAME WHITE</text>
+        </svg>
+        <span class="tc">02 · THE CUT</span><span class="tc2">8 – 14%</span>
+      </div>
+      <div>
+        <div class="head"><span class="num">02</span><span class="kanji">斬</span><h3>The cut slices the screen</h3></div>
+        <p class="scroll">Scroll 8 – 14% · camera dolly-in + 4° roll · <span class="tag new">signature moment</span></p>
+        <dl>
+          <dt>3D</dt><dd>The draw and the rising cut play as now, scrubbed by scroll. The blade is an emissive line with bloom, and a bright arc trails behind it as it moves.</dd>
+          <dt>Motion</dt><dd>At the peak of the cut time drops to quarter speed and the camera pushes in. Then <em>the whole viewport is sliced</em> along the blade's diagonal. The hero (3D and the HTML text) splits into two halves that slide apart a few pixels, with a one-frame white edge and an RGB-split flash. It is the same cut as the SlashText hover, at page scale.</dd>
+          <dt>Feel</dt><dd>Snappy, not long: about 0.9s of real time. Scrolling back up reverses it cleanly, so the halves rejoin and the sword goes back in.</dd>
+        </dl>
+      </div>
+    </div>
+
+    <!-- 03 -->
+    <div class="shot">
+      <div class="panel">
+        <svg viewBox="0 0 320 180">
+          <rect width="320" height="180" fill="#050505"/>
+          <circle cx="225" cy="70" r="70" fill="url(#glow)" opacity=".6"/>
+          <mask id="cres"><circle cx="225" cy="70" r="50" fill="#fff"/><circle cx="208" cy="64" r="50" fill="#000"/></mask>
+          <circle cx="225" cy="70" r="50" fill="url(#dots)" mask="url(#cres)"/>
+          <circle cx="225" cy="70" r="50" fill="url(#dotsDim)" opacity=".2"/>
+          <g fill="#ededed">
+            <circle cx="150" cy="96" r=".8"/><circle cx="140" cy="100" r="1"/><circle cx="128" cy="104" r="1.3"/><circle cx="112" cy="110" r="1.7"/>
+            <circle cx="92" cy="118" r="2.3"/><circle cx="66" cy="128" r="3.2"/><circle cx="34" cy="142" r="4.5"/>
+            <circle cx="160" cy="84" r=".8"/><circle cx="148" cy="80" r="1.1"/><circle cx="130" cy="74" r="1.5"/><circle cx="104" cy="66" r="2"/><circle cx="70" cy="54" r="3"/><circle cx="24" cy="38" r="5" opacity=".6"/>
+            <circle cx="166" cy="110" r=".8"/><circle cx="158" cy="124" r="1.2"/><circle cx="146" cy="146" r="2"/><circle cx="128" cy="176" r="3.4"/>
+            <circle cx="172" cy="74" r=".7"/><circle cx="174" cy="60" r="1"/><circle cx="178" cy="36" r="1.6"/><circle cx="184" cy="8" r="2.4"/>
+          </g>
+          <g fill="#ededed" opacity=".5"><circle cx="168" cy="92" r=".6"/><circle cx="162" cy="100" r=".6"/><circle cx="170" cy="100" r=".6"/><circle cx="165" cy="88" r=".6"/><circle cx="160" cy="92" r=".6"/></g>
+          <path d="M30 150 C 90 120, 130 100, 165 95" fill="none" stroke="#ededed" stroke-opacity=".12" stroke-dasharray="1 3"/>
+        </svg>
+        <span class="tc">03 · DUST</span><span class="tc2">14 – 24%</span>
+      </div>
+      <div>
+        <div class="head"><span class="num">03</span><span class="kanji">塵</span><h3>Dust toward the lens, moon wanes</h3></div>
+        <p class="scroll">Scroll 14 – 24% · camera pulls back and rises</p>
+        <dl>
+          <dt>3D</dt><dd>The samurai comes apart into dust that blows <em>toward the camera</em>. Close particles grow large and blur with depth of field, so you feel them pass the lens. The moon wanes physically: a light orbits the sphere, so the terminator is real, not a mask.</dd>
+          <dt>Motion</dt><dd>This replaces today's empty "quiet stretch" spacer: the scroll is pinned here so the dust has room to play. The water plane sinks away below and the horizon drops out of frame.</dd>
+          <dt>Handoff</dt><dd>Not all the dust leaves. One cloud stays in the scene and becomes the "ink" that writes each section's kanji from here on.</dd>
+        </dl>
+      </div>
+    </div>
+
+    <!-- 04 -->
+    <div class="shot">
+      <div class="panel">
+        <svg viewBox="0 0 320 180">
+          <rect width="320" height="180" fill="#050505"/>
+          <mask id="cres2"><circle cx="262" cy="56" r="34" fill="#fff"/><circle cx="250" cy="52" r="34" fill="#000"/></mask>
+          <circle cx="262" cy="56" r="34" fill="url(#dots)" mask="url(#cres2)" opacity=".7"/>
+          <text x="232" y="148" font-size="110" text-anchor="middle" font-family="serif" fill="url(#inkLight)" opacity=".55">人</text>
+          <g fill="#ededed" opacity=".6"><circle cx="300" cy="150" r="1"/><circle cx="306" cy="140" r="1.4"/><circle cx="296" cy="164" r=".8"/><circle cx="170" cy="40" r="1"/></g>
+          <rect x="22" y="36" width="4" height="4" fill="#ededed"/><rect x="30" y="37" width="24" height="2" fill="#6b6b6b"/>
+          <rect x="22" y="48" width="120" height="8" fill="#ededed"/>
+          <rect x="22" y="60" width="96" height="8" fill="#ededed"/>
+          <rect x="22" y="80" width="110" height="2" fill="#6b6b6b"/><rect x="22" y="85" width="100" height="2" fill="#6b6b6b"/><rect x="22" y="90" width="80" height="2" fill="#6b6b6b"/>
+          <g stroke="#ededed" stroke-opacity=".15"><line x1="22" y1="108" x2="150" y2="108"/><line x1="22" y1="120" x2="150" y2="120"/><line x1="22" y1="132" x2="150" y2="132"/><line x1="22" y1="144" x2="150" y2="144"/></g>
+          <line x1="22" y1="108" x2="84" y2="108" stroke="#ededed" stroke-width=".8"/>
+        </svg>
+        <span class="tc">04 · ABOUT</span><span class="tc2">24 – 36%</span>
+      </div>
+      <div>
+        <div class="head"><span class="num">04</span><span class="kanji">人</span><h3>About: the dust writes 人</h3></div>
+        <p class="scroll">Scroll 24 – 36% · camera slow drift right</p>
+        <dl>
+          <dt>3D</dt><dd>The dust cloud flows into a large brush-stroke 人 behind the right column. It is made of the same particles and holds stroke order (left stroke, then right), like it is being written. The crescent rests small in the corner.</dd>
+          <dt>Motion</dt><dd>The heading reveals through a slash mask. The fact rows (Based in / Experience / …) draw their top rule left to right, then the text fades in, one row after another. The "{years}+ years" number counts up.</dd>
+          <dt>System</dt><dd><strong>Kanji morph</strong> is the core device for the middle sections: 人 → 道 → 戦 → 武 → 連. Each section's kanji re-forms from the last one as you scroll between them.</dd>
+        </dl>
+      </div>
+    </div>
+
+    <!-- 05 -->
+    <div class="shot">
+      <div class="panel">
+        <svg viewBox="0 0 320 180">
+          <rect width="320" height="180" fill="#050505"/>
+          <path d="M0 180 L140 104 L180 104 L320 180 Z" fill="#0a0a0a"/>
+          <path d="M160 104 L160 180" stroke="#ededed" stroke-opacity=".08"/>
+          <path d="M-20 160 C 80 140, 140 118, 300 104" fill="none" stroke="#ededed" stroke-opacity=".5" stroke-width=".8"/>
+          <g fill="#050505" stroke="#ededed" stroke-width=".8">
+            <rect x="28" y="146" width="7" height="7" transform="rotate(45 31.5 149.5)" fill="#ededed"/>
+            <rect x="110" y="128" width="6" height="6" transform="rotate(45 113 131)" fill="#ededed"/>
+            <rect x="196" y="112" width="5" height="5" transform="rotate(45 198.5 114.5)"/>
+            <rect x="262" y="106" width="4" height="4" transform="rotate(45 264 108)"/>
+          </g>
+          <circle cx="113" cy="131" r="18" fill="url(#glow)"/>
+          <text x="28" y="136" fill="#6b6b6b" font-size="6" font-family="monospace">01 PLAN</text>
+          <text x="104" y="118" fill="#ededed" font-size="8" font-family="sans-serif">02 Build</text>
+          <text x="188" y="102" fill="#6b6b6b" font-size="5" font-family="monospace">03 SHIP</text>
+          <text x="254" y="98" fill="#6b6b6b" font-size="4" font-family="monospace">04</text>
+          <text x="160" y="64" font-size="48" text-anchor="middle" font-family="serif" fill="url(#inkLight)" opacity=".3">道</text>
+          <rect x="22" y="22" width="130" height="7" fill="#ededed"/>
+          <rect x="0" y="174" width="320" height="2" fill="#151515"/><rect x="0" y="174" width="120" height="2" fill="#ededed"/>
+        </svg>
+        <span class="tc">05 · APPROACH</span><span class="tc2">36 – 50% · PINNED</span>
+      </div>
+      <div>
+        <div class="head"><span class="num">05</span><span class="kanji">道</span><h3>The path: a camera walk</h3></div>
+        <p class="scroll">Scroll 36 – 50% · section pinned · camera trucks forward</p>
+        <dl>
+          <dt>3D</dt><dd>The flat timeline becomes a real path: one glowing line on a dark ground that runs off toward the horizon, with the four diamond markers set along it. 道 hangs in the sky ahead.</dd>
+          <dt>Motion</dt><dd>The section pins while you scroll and the camera walks the path. As each marker passes, it lights up, its card (Plan / Build / Ship / Sustain) comes forward, and the last one fades back. A progress hairline runs along the bottom.</dd>
+          <dt>Mobile</dt><dd>Not pinned. The path turns vertical, as today, and the markers light up as they reach the middle of the screen.</dd>
+        </dl>
+      </div>
+    </div>
+
+    <!-- 06 -->
+    <div class="shot">
+      <div class="panel">
+        <svg viewBox="0 0 320 180">
+          <rect width="320" height="180" fill="#050505"/>
+          <text x="262" y="130" font-size="100" text-anchor="middle" font-family="serif" fill="url(#inkLight)" opacity=".18">戦</text>
+          <g stroke="#ededed" stroke-opacity=".14"><line x1="20" y1="40" x2="300" y2="40"/><line x1="20" y1="104" x2="300" y2="104"/><line x1="20" y1="126" x2="300" y2="126"/><line x1="20" y1="148" x2="300" y2="148"/><line x1="20" y1="170" x2="300" y2="170"/></g>
+          <text x="22" y="54" fill="#c4453f" font-size="6" font-family="monospace">01</text>
+          <rect x="40" y="48" width="140" height="7" fill="#ededed"/>
+          <g transform="translate(40 66)">
+            <path d="M0 6 L210 2 Q 226 2 236 6 L210 9 L0 9 Z" fill="#ededed" opacity=".9"/>
+            <rect x="-24" y="3.5" width="22" height="7" fill="#1a1a1a" stroke="#6b6b6b" stroke-width=".5"/>
+            <rect x="-3" y="1" width="3" height="12" fill="#6b6b6b"/>
+          </g>
+          <text x="40" y="92" fill="#6b6b6b" font-size="5" font-family="monospace">THE PROBLEM      THE APPROACH       THE RESULT</text>
+          <text x="196" y="99" fill="#ededed" font-size="8" font-family="sans-serif">7.6k lines</text>
+          <g fill="#6b6b6b"><text x="22" y="118" font-size="6" font-family="monospace">02</text><text x="22" y="140" font-size="6" font-family="monospace">03</text><text x="22" y="162" font-size="6" font-family="monospace">04</text></g>
+          <g fill="#ededed" opacity=".75"><rect x="40" y="113" width="150" height="5"/><rect x="40" y="135" width="120" height="5"/><rect x="40" y="157" width="100" height="5"/></g>
+          <g fill="#6b6b6b"><rect x="276" y="112" width="12" height="6" rx="1"/><rect x="276" y="134" width="12" height="6"/><rect x="276" y="156" width="12" height="6"/></g>
+        </svg>
+        <span class="tc">06 · WORK</span><span class="tc2">50 – 66%</span>
+      </div>
+      <div>
+        <div class="head"><span class="num">06</span><span class="kanji">戦</span><h3>Work: each row is a blade</h3></div>
+        <p class="scroll">Scroll 50 – 66% · camera holds, low motion</p>
+        <dl>
+          <dt>Idea</dt><dd>The accordion stays as real HTML and keeps <code>&lt;details&gt;</code>. Each row's divider is a sheathed blade lying flat. <em>Hover</em> draws it a few centimetres out of its saya with a hiss of light along the edge. <em>Open</em> draws the blade fully across the row, and the panel opens along the cut.</dd>
+          <dt>Motion</dt><dd>When a row opens, Problem, Approach and Result fade in one after another. Result numbers animate (40–80k → 7.6k lines, 382 → 280 man-days). The open row's number turns blood-red, as now.</dd>
+          <dt>3D</dt><dd>Restrained on purpose, because this is the reading section. 戦 floats faint behind the list, and the background stays calm so the NDA write-ups read clearly.</dd>
+        </dl>
+      </div>
+    </div>
+
+    <!-- 07 -->
+    <div class="shot">
+      <div class="panel">
+        <svg viewBox="0 0 320 180">
+          <rect width="320" height="180" fill="#050505"/>
+          <ellipse cx="200" cy="96" rx="96" ry="30" fill="none" stroke="#ededed" stroke-opacity=".15"/>
+          <ellipse cx="200" cy="96" rx="66" ry="20" fill="none" stroke="#ededed" stroke-opacity=".1"/>
+          <circle cx="200" cy="96" r="13" fill="none" stroke="#ededed" stroke-width=".8"/>
+          <circle cx="200" cy="96" r="4" fill="#050505" stroke="#ededed" stroke-width=".6"/>
+          <text x="200" y="66" font-size="22" text-anchor="middle" font-family="serif" fill="url(#inkLight)" opacity=".5">武</text>
+          <g font-family="monospace" fill="#ededed">
+            <text x="108" y="100" font-size="7">.NET Core</text>
+            <text x="258" y="104" font-size="6" fill="#9a9a9a">Golang</text>
+            <text x="188" y="130" font-size="9">PostgreSQL</text>
+            <text x="216" y="70" font-size="4" fill="#6b6b6b">Redis</text>
+            <text x="150" y="72" font-size="4" fill="#6b6b6b">Azure</text>
+            <text x="138" y="118" font-size="6" fill="#9a9a9a">Docker</text>
+            <text x="246" y="122" font-size="7">Next.js</text>
+          </g>
+          <g font-family="monospace" font-size="5" fill="#6b6b6b"><text x="22" y="150">BACKEND</text><text x="80" y="150">FRONTEND</text><text x="140" y="150">DATABASE</text><text x="200" y="150">DEVOPS</text></g>
+          <g fill="#9a9a9a"><rect x="22" y="155" width="34" height="2"/><rect x="80" y="155" width="30" height="2"/><rect x="140" y="155" width="36" height="2"/><rect x="200" y="155" width="28" height="2"/></g>
+        </svg>
+        <span class="tc">07 · TOOLKIT</span><span class="tc2">66 – 76%</span>
+      </div>
+      <div>
+        <div class="head"><span class="num">07</span><span class="kanji">武</span><h3>Toolkit: the tsuba ring</h3></div>
+        <p class="scroll">Scroll 66 – 76% · camera tilts down onto the ring</p>
+        <dl>
+          <dt>3D</dt><dd>A sword guard (tsuba) made of dots sits at the centre. The tool names orbit it in 3D rings, one ring per group. Names on the near side are large and bright and those on the far side fade, which gives the depth.</dd>
+          <dt>Motion</dt><dd>Scroll turns the ring. Hovering a group label in the HTML grid below makes its ring light up and pulls those names to the front. The plain four-column list stays under it for reading and SEO.</dd>
+        </dl>
+      </div>
+    </div>
+
+    <!-- 08 -->
+    <div class="shot">
+      <div class="panel">
+        <svg viewBox="0 0 320 180">
+          <rect width="320" height="180" fill="#050505"/>
+          <mask id="m1"><circle cx="50" cy="90" r="28" fill="#fff"/><circle cx="38" cy="86" r="28" fill="#000"/></mask>
+          <circle cx="50" cy="90" r="28" fill="url(#dots)" mask="url(#m1)"/>
+          <circle cx="120" cy="90" r="28" fill="#0b0b0b" stroke="#ededed" stroke-opacity=".15"/>
+          <circle cx="120" cy="90" r="31" fill="none" stroke="#ededed" stroke-opacity=".08" stroke-width="3"/>
+          <mask id="m3"><circle cx="190" cy="90" r="28" fill="#fff"/><circle cx="208" cy="92" r="28" fill="#000"/></mask>
+          <circle cx="190" cy="90" r="28" fill="url(#dotsRed)" mask="url(#m3)" opacity=".8"/>
+          <circle cx="268" cy="90" r="46" fill="url(#glowRed)"/>
+          <circle cx="268" cy="90" r="28" fill="url(#dotsRed)"/>
+          <g stroke="#ededed" stroke-opacity=".3" stroke-width=".6"><path d="M80 90 h10 m-3 -3 l3 3 l-3 3"/><path d="M150 90 h10 m-3 -3 l3 3 l-3 3"/><path d="M222 90 h10 m-3 -3 l3 3 l-3 3"/></g>
+          <g font-family="monospace" font-size="5" fill="#6b6b6b" text-anchor="middle"><text x="50" y="136">CRESCENT</text><text x="120" y="136">NEW MOON</text><text x="190" y="136">EMERGING</text><text x="268" y="148">BLOOD MOON</text></g>
+          <rect x="0" y="0" width="320" height="180" fill="#c4453f" opacity=".04"/>
+        </svg>
+        <span class="tc">08 · ECLIPSE</span><span class="tc2">76 – 86%</span>
+      </div>
+      <div>
+        <div class="head"><span class="num">08</span><span class="kanji">蝕</span><h3>Eclipse: the turn to red</h3></div>
+        <p class="scroll">Scroll 76 – 86% · camera drifts up toward the moon</p>
+        <dl>
+          <dt>3D</dt><dd>The crescent wanes to a new moon, which gets a faint corona ring like a real eclipse. Then the shadow passes off the other side and leaves a full blood moon. The kanji dust goes dark and then lights red.</dd>
+          <dt>Grade</dt><dd>The whole scene's colour grade moves a few percent toward red: fog, grain and ash. The accent dot, focus rings and slash lines in the UI shift from white to blood. It should feel like the night changed, not like a theme switch.</dd>
+        </dl>
+      </div>
+    </div>
+
+    <!-- 09 -->
+    <div class="shot">
+      <div class="panel">
+        <svg viewBox="0 0 320 180">
+          <rect width="320" height="180" fill="#050505"/>
+          <g stroke="#c4453f" stroke-opacity=".18" stroke-width="5">
+            <line x1="270" y1="40" x2="140" y2="180"/><line x1="270" y1="40" x2="230" y2="180"/><line x1="270" y1="40" x2="320" y2="150"/><line x1="270" y1="40" x2="60" y2="130"/>
+          </g>
+          <circle cx="270" cy="40" r="44" fill="url(#glowRed)"/>
+          <circle cx="270" cy="40" r="22" fill="url(#dotsRed)"/>
+          <use href="#sam" x="226" y="86" width="38" height="66" fill="url(#inkLight)" opacity=".85"/>
+          <g fill="#c4453f"><circle cx="190" cy="70" r="1.2"/><circle cx="150" cy="110" r="1"/><circle cx="210" cy="140" r=".8"/><circle cx="300" cy="120" r="1.2"/></g>
+          <rect x="22" y="40" width="150" height="14" fill="#ededed"/>
+          <rect x="22" y="58" width="130" height="14" fill="#ededed"/>
+          <rect x="22" y="84" width="96" height="2" fill="#6b6b6b"/>
+          <text x="22" y="112" fill="#ededed" font-size="10" font-family="sans-serif">bandanairmal@gmail.com ↗</text>
+          <line x1="22" y1="117" x2="150" y2="117" stroke="#ededed" stroke-opacity=".3"/>
+          <line x1="20" y1="111" x2="152" y2="101" stroke="#c4453f" stroke-width=".8"/>
+          <line x1="0" y1="152" x2="320" y2="152" stroke="#ededed" stroke-opacity=".12"/>
+        </svg>
+        <span class="tc">09 · CONTACT</span><span class="tc2">86 – 100%</span>
+      </div>
+      <div>
+        <div class="head"><span class="num">09</span><span class="kanji">連</span><h3>Contact: the second samurai</h3></div>
+        <p class="scroll">Scroll 86 – 100% · wide shot, god rays toward camera</p>
+        <dl>
+          <dt>3D</dt><dd>The dust gathers into a second samurai with the sword sheathed. He faces a small blood moon whose light streams toward the viewer as volumetric rays. Red ash falls through the rays.</dd>
+          <dt>Payoff</dt><dd>Hovering the email makes the samurai's hand move to the hilt (anticipation). Clicking plays a red slash across the email (SlashText in blood) before the mail app opens. The arc closes: you came in on a draw and you leave on a promise of one.</dd>
+          <dt>Footer</dt><dd>As now. The live Jakarta clock ticks with a tiny pulse, and "Back to top" plays the scene in reverse at 4× speed back to the stance.</dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <p class="label"><span class="k">型</span>Global systems</p>
+    <table>
+      <tr><th>System</th><th>Design</th></tr>
+      <tr><td>Cursor</td><td>A hairline reticle. When it moves fast it stretches into a short blade stroke along the motion. Over links it becomes a small ring. Hidden on touch.</td></tr>
+      <tr><td>Page transitions</td><td>Home ↔ /blogs: a diagonal ink wipe in the same direction as the cut. The 3D scene stays mounted and only the camera moves to a quiet "reading" pose for /blogs.</td></tr>
+      <tr><td>Light mode</td><td><em>Sumi-e</em>: washi paper grain, ink-black particles, a pale grey moon and a vermilion hanko red as the accent. The same scene with a different look, not a separate design.</td></tr>
+      <tr><td>Sound <span class="tag new">optional</span></td><td>Off by default, with a toggle in the header. Wind bed, a sheath slide at the draw, a single "shing" at the cut, a low taiko at the blood moon.</td></tr>
+      <tr><td>Reduced motion</td><td>No pinning and no camera moves. Each scene shows as a still key frame, cross-fading between sections. The current 2D canvas is a valid fallback.</td></tr>
+      <tr><td>Performance</td><td>Three device tiers set by a quick GPU probe: 60k / 25k / 2D fallback particles. Three.js is code-split and loaded after the HTML paints. The scene pauses off-tab, and the hero text is never blocked by WebGL.</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <p class="label"><span class="k">具</span>Proposed stack</p>
+    <table>
+      <tr><th>Layer</th><th>Choice</th><th>Why</th></tr>
+      <tr><td>3D</td><td>three.js via React Three Fiber + drei</td><td>Fits the existing Next.js / React 19 app. Static export to GitHub Pages still works.</td></tr>
+      <tr><td>Particles</td><td>Custom GLSL, GPGPU (FBO ping-pong) positions</td><td>60k+ points with curl-noise wind and morph targets (samurai → dust → kanji → samurai) all on the GPU.</td></tr>
+      <tr><td>Post FX</td><td>@react-three/postprocessing</td><td>Bloom, chromatic aberration (cut only), depth of field (dust), film grain, colour grade (eclipse).</td></tr>
+      <tr><td>Scroll</td><td>Lenis (already used) + GSAP ScrollTrigger</td><td>One master timeline. Every shot above is a labelled range on it.</td></tr>
+      <tr><td>Samurai source</td><td>Phase 1: 2.5D from the current silhouette masks (layered depth). Phase 2: optional rigged 3D model</td><td>Starts from your existing art and pose work. A real model unlocks free camera angles later.</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <p class="label"><span class="k">問</span>Decisions for you</p>
+    <ol class="q">
+      <li><b>Samurai asset.</b> Do we start with 2.5D built from your current silhouettes (faster, keeps the existing poses), or source or commission a rigged 3D samurai model now?</li>
+      <li><b>Intensity.</b> The full cinematic (pinned scenes, the screen-slice cut), or a restrained version where 3D stays mostly in the background and nothing pins?</li>
+      <li><b>Prologue loader.</b> Keep it, or go straight to the hero?</li>
+      <li><b>Light mode as sumi-e,</b> and <b>sound</b>: in or out?</li>
+      <li><b>Next step.</b> Once this is agreed, I'd build a single interactive prototype of shots 01–03 (stance → cut → dust) to prove the look and performance before the rest.</li>
+    </ol>
+  </section>
+
+  <p class="muted" style="margin-top:72px;font:11px/1.6 var(--mono);letter-spacing:.06em">侍 · biairmal v4 storyboard · draft 01 · 2026-10-31</p>
+</div>
+</body>
+</html>
