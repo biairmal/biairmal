@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>biairmal v4 · Storyboard · draft 02</title>
+<style>
+  :root {
+    --bg: #0a0a0a; --fg: #ededed; --muted: #a0a0a0; --faint: #6e6e6e;
+    --line: rgba(237,237,237,.12); --blood: #c4453f;
+    --mono: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    --sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --jp: "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.6 var(--sans); }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 56px 28px 120px; }
+  .label { font: 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--faint); display: flex; gap: 10px; align-items: center; margin: 0 0 18px; }
+  .label .k { font: 16px/1 var(--jp); color: var(--fg); letter-spacing: 0; }
+  .dot { width: 6px; height: 6px; background: var(--blood); display: inline-block; }
+  h1 { font-size: clamp(38px, 6.4vw, 80px); line-height: 1.02; letter-spacing: -.05em; font-weight: 500; margin: 18px 0 22px; }
+  h2 { font-size: clamp(26px, 3.4vw, 42px); letter-spacing: -.035em; font-weight: 500; margin: 0 0 14px; line-height: 1.1; }
+  h3 { font-size: 24px; letter-spacing: -.02em; font-weight: 500; margin: 0; }
+  p { margin: 0 0 12px; }
+  .muted { color: var(--muted); }
+  .lede { max-width: 760px; color: var(--muted); font-size: 18px; line-height: 1.65; }
+  section { margin-top: 110px; }
+  code { font: 13px var(--mono); color: #d6d6d6; }
+  .hero-img { margin-top: 44px; border: 1px solid var(--line); display: block; width: 100%; }
+  .cap { font: 11px/1.5 var(--mono); color: var(--faint); letter-spacing: .06em; margin-top: 10px; text-transform: uppercase; }
+
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+  .grid3 > div { background: var(--bg); padding: 22px; }
+  .grid3 b { display: block; font-weight: 500; margin-bottom: 8px; }
+  .grid3 span { color: var(--muted); font-size: 14px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 12px 18px 12px 0; border-top: 1px solid var(--line); vertical-align: top; }
+  th { font: 10px/1.6 var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--faint); font-weight: 400; }
+  td { color: #d0d0d0; }
+  td:first-child { white-space: nowrap; color: var(--fg); }
+  td.m { font: 12px/1.6 var(--mono); color: var(--muted); white-space: nowrap; }
+
+  /* timeline strip */
+  .tl { position: relative; height: 92px; margin-top: 26px; border-top: 1px solid var(--line); }
+  .tl .seg { position: absolute; top: 0; height: 100%; border-left: 1px solid var(--line); padding: 10px 0 0 8px; font: 11px/1.4 var(--mono); color: var(--faint); overflow: hidden; }
+  .tl .seg b { display: block; font: 15px/1.3 var(--jp); color: var(--fg); font-weight: 400; margin-bottom: 3px; }
+  .tl .seg.pin { background: repeating-linear-gradient(135deg, rgba(237,237,237,.05) 0 6px, transparent 6px 12px); }
+  .tl .seg.red b { color: #e2726c; }
+
+  /* shots */
+  .shot { padding: 56px 0; border-top: 1px solid var(--line); }
+  .shot-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 6px; flex-wrap: wrap; }
+  .num { font: 12px/1 var(--mono); color: var(--faint); }
+  .kanji { font: 26px/1 var(--jp); }
+  .meta { font: 11px/1.5 var(--mono); color: var(--faint); letter-spacing: .06em; text-transform: uppercase; margin: 8px 0 22px; }
+  .meta span { margin-right: 18px; }
+  .frame { display: block; width: 100%; border: 1px solid var(--line); background: #000; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .pair figure { margin: 0; }
+  .notes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 26px; }
+  .notes h4 { font: 10px/1 var(--mono); text-transform: uppercase; letter-spacing: .1em; color: var(--faint); font-weight: 400; margin: 0 0 10px; padding-top: 12px; border-top: 1px solid var(--line); }
+  .notes p { font-size: 14px; color: #cfcfcf; line-height: 1.6; }
+  .tag { display: inline-block; font: 10px/1 var(--mono); padding: 4px 6px; border: 1px solid var(--line); color: var(--muted); letter-spacing: .06em; text-transform: uppercase; vertical-align: 3px; }
+  .tag.r { border-color: rgba(196,69,63,.6); color: #e58a85; }
+
+  .map { width: 100%; border: 1px solid var(--line); background: #060606; display: block; }
+  ol.q { padding-left: 20px; } ol.q li { margin-bottom: 12px; color: #cfcfcf; } ol.q b { color: var(--fg); font-weight: 500; }
+  .swatches { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+  .sw { width: 150px; }
+  .sw i { display: block; height: 64px; border: 1px solid var(--line); }
+  .sw span { display: block; font: 11px/1.5 var(--mono); color: var(--muted); margin-top: 8px; }
+
+  @media (max-width: 900px) {
+    .grid3, .notes, .pair { grid-template-columns: 1fr; }
+    .tl { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <p class="label"><span class="dot"></span>Design phase · v4 · draft 02 · full 3D</p>
+  <h1>Digital samurai.<br>A real 3D world, one scroll long.</h1>
+  <p class="lede">Draft 02 drops the 2.5D and particle ideas. The samurai becomes a real rigged 3D character, and the site becomes one continuous moonlit set. Scrolling moves a film camera through that set. Every frame below is a real-time 3D render from a previz scene built from stand-in primitives: the camera, lens, light and layout are what we would build, but the models are placeholders for the final art.</p>
+  <img class="hero-img" src="frames/s01.jpg" alt="Hero previz: samurai silhouetted against a full moon, standing on a stone slab over black water, with the hero copy on the left">
+  <p class="cap">Shot 01 · previz render · stand-in geometry</p>
+
+  <section>
+    <p class="label"><span class="k">改</span>What changed since draft 01</p>
+    <div class="grid3">
+      <div><b>Real 3D, not 2.5D</b><span>The samurai is a skinned, animated 3D character. The camera can orbit, crane and push past him because he has a back, a side and depth.</span></div>
+      <div><b>No particles (for now)</b><span>Dust and kanji morphs are gone. Shots now join through <em>camera moves</em> inside one world. The kanji are carved, lit monoliths that the camera visits. Particles can come back later as an extra layer.</span></div>
+      <div><b>"Digital" through light</b><span>What makes him digital is a hairline light seam on his kasa rim, shoulder wings, hakama pleats, scabbard mouth and blade edge. They read like circuit traces, or kintsugi done in light.</span></div>
+    </div>
+  </section>
+
+  <section>
+    <p class="label"><span class="k">流</span>The scroll, as a film</p>
+    <h2>One page, twelve shots, four pinned scenes.</h2>
+    <p class="muted" style="max-width:760px">The percentages are the share of the home page's scroll. Hatched blocks are pinned: the page stops moving while the camera keeps going.</p>
+    <div class="tl">
+      <div class="seg" style="left:0;width:6%"><b>構</b>01</div>
+      <div class="seg pin" style="left:6%;width:9%"><b>斬</b>02 cut</div>
+      <div class="seg pin" style="left:15%;width:9%"><b>昇</b>03 rise</div>
+      <div class="seg" style="left:24%;width:12%"><b>人</b>04 about</div>
+      <div class="seg pin" style="left:36%;width:14%"><b>道</b>05 path</div>
+      <div class="seg" style="left:50%;width:16%"><b>戦</b>06 work</div>
+      <div class="seg" style="left:66%;width:10%"><b>武</b>07 tools</div>
+      <div class="seg pin red" style="left:76%;width:10%"><b>蝕</b>08 eclipse</div>
+      <div class="seg red" style="left:86%;width:14%"><b>連</b>09 contact</div>
+    </div>
+  </section>
+
+  <section>
+    <p class="label"><span class="k">地</span>The world</p>
+    <h2>One continuous set, not a stack of sections.</h2>
+    <p class="muted" style="max-width:760px">Everything sits in a single scene on still black water under one moon. Each section has a <em>set</em>, and the camera travels between sets. Sets that are far from the camera are hidden and loaded on demand, so the cost stays at roughly one set at a time.</p>
+    <svg class="map" viewBox="0 0 1000 560" role="img" aria-label="Top view of the world: the hero slab at the left, the 人 monolith, the walkway with lanterns, the sword rack and the tsuba ring to the right, with the camera path drawn through them">
+      <defs>
+        <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#ededed" stroke-opacity=".04"/></pattern>
+        <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#c4453f"/></marker>
+      </defs>
+      <rect width="1000" height="560" fill="url(#grid)"/>
+      <text x="28" y="36" fill="#6e6e6e" font-family="Geist Mono, monospace" font-size="11" letter-spacing="2">TOP VIEW · BLACK WATER · 1 GRID = 4 M</text>
+      <!-- moon direction -->
+      <line x1="230" y1="280" x2="990" y2="520" stroke="#ededed" stroke-opacity=".12" stroke-dasharray="2 6"/>
+      <text x="984" y="548" fill="#9a9a9a" font-family="Geist Mono, monospace" font-size="11" text-anchor="end" letter-spacing="1.5">MOON → 180 M, BEHIND THE HERO</text>
+      <!-- sets -->
+      <rect x="196" y="262" width="50" height="34" fill="#2a2a2c" stroke="#ededed" stroke-opacity=".3"/>
+      <text x="221" y="318" fill="#cfcfcf" font-family="Geist Mono, monospace" font-size="11" text-anchor="middle">STONE SLAB</text>
+      <rect x="430" y="150" width="24" height="7" fill="#ededed" transform="rotate(-28 442 154)"/>
+      <text x="444" y="136" fill="#cfcfcf" font-family="Noto Serif JP, serif" font-size="15" text-anchor="middle">人</text>
+      <line x1="520" y1="232" x2="770" y2="232" stroke="#8a7a66" stroke-width="12" stroke-opacity=".35"/>
+      <line x1="520" y1="232" x2="770" y2="232" stroke="#ededed" stroke-opacity=".6"/>
+      <g fill="#0a0a0a" stroke="#ededed"><circle cx="560" cy="248" r="5"/><circle cx="620" cy="216" r="5"/><circle cx="680" cy="248" r="5"/><circle cx="740" cy="216" r="5"/></g>
+      <rect x="850" y="226" width="22" height="12" fill="#ededed"/>
+      <text x="861" y="214" fill="#cfcfcf" font-family="Noto Serif JP, serif" font-size="15" text-anchor="middle">道</text>
+      <text x="645" y="270" fill="#9a9a9a" font-family="Geist Mono, monospace" font-size="11" text-anchor="middle">WALKWAY · 4 LANTERNS</text>
+      <rect x="600" y="352" width="44" height="12" fill="#2a2a2c" stroke="#ededed" stroke-opacity=".4" transform="rotate(17 622 358)"/>
+      <text x="622" y="392" fill="#cfcfcf" font-family="Geist Mono, monospace" font-size="11" text-anchor="middle">戦 SWORD RACK</text>
+      <circle cx="860" cy="470" r="22" fill="none" stroke="#ededed" stroke-opacity=".5"/>
+      <g fill="#2a2a2c" stroke="#ededed" stroke-opacity=".6"><circle cx="882" cy="470" r="5"/><circle cx="838" cy="470" r="5"/><circle cx="860" cy="448" r="5"/><circle cx="860" cy="492" r="5"/></g>
+      <text x="860" y="518" fill="#cfcfcf" font-family="Geist Mono, monospace" font-size="11" text-anchor="middle">武 TSUBA RING</text>
+      <!-- camera path -->
+      <path d="M136 256 C 170 262, 180 268, 193 272 C 160 250, 140 245, 140 239 C 220 230, 290 228, 335 228 C 420 228, 470 228, 525 228 C 600 300, 600 330, 600 330 C 700 400, 760 470, 785 480 C 500 400, 200 300, 80 253 C 100 248, 115 244, 125 242" fill="none" stroke="#c4453f" stroke-width="1.5" stroke-dasharray="6 5" marker-end="url(#ar)"/>
+      <g font-family="Geist Mono, monospace" font-size="10" text-anchor="middle">
+        <g><circle cx="136" cy="256" r="11" fill="#0a0a0a" stroke="#ededed"/><text x="136" y="260" fill="#ededed">01</text></g>
+        <g><circle cx="193" cy="292" r="11" fill="#0a0a0a" stroke="#ededed"/><text x="193" y="296" fill="#ededed">02</text></g>
+        <g><circle cx="140" cy="216" r="11" fill="#0a0a0a" stroke="#ededed"/><text x="140" y="220" fill="#ededed">03</text></g>
+        <g><circle cx="335" cy="228" r="11" fill="#0a0a0a" stroke="#ededed"/><text x="335" y="232" fill="#ededed">04</text></g>
+        <g><circle cx="525" cy="206" r="11" fill="#0a0a0a" stroke="#ededed"/><text x="525" y="210" fill="#ededed">05</text></g>
+        <g><circle cx="600" cy="330" r="11" fill="#0a0a0a" stroke="#ededed"/><text x="600" y="334" fill="#ededed">06</text></g>
+        <g><circle cx="785" cy="456" r="11" fill="#0a0a0a" stroke="#ededed"/><text x="785" y="460" fill="#ededed">07</text></g>
+        <g><circle cx="80" cy="253" r="11" fill="#0a0a0a" stroke="#c4453f"/><text x="80" y="257" fill="#e58a85">08</text></g>
+        <g><circle cx="112" cy="226" r="11" fill="#0a0a0a" stroke="#c4453f"/><text x="112" y="230" fill="#e58a85">09</text></g>
+      </g>
+      <text x="28" y="540" fill="#6e6e6e" font-family="Geist Mono, monospace" font-size="11" letter-spacing="1.5">RED DASH = CAMERA PATH · 08 – 09 RETURN TO THE SLAB FOR THE ENDING</text>
+    </svg>
+  </section>
+
+  <section>
+    <p class="label"><span class="k">侍</span>The character</p>
+    <h2>One samurai, rigged, with eight clips.</h2>
+    <div class="grid3" style="margin-top:22px">
+      <div><b>Silhouette</b><span>It has to read at 60px tall against a full moon. The wide <em>kasa</em> (straw hat), the stiff <em>kataginu</em> shoulder wings, the flared <em>hakama</em>, and the katana with its saya at the left hip. No visible face: the hat keeps him anonymous.</span></div>
+      <div><b>Digital seams</b><span>Emissive hairlines run along the kasa rim, the wing edges, one pleat on each leg, the scabbard mouth (koiguchi) and the blade's hamon. They are white by night and turn red under the blood moon.</span></div>
+      <div><b>Asset spec</b><span>Draco-compressed glTF (.glb), about 25k triangles. The katana and saya are separate meshes so they can be swapped between hand and hip. KTX2 textures at 2K. The download budget is <b>≤ 4 MB</b> for the character with all clips.</span></div>
+    </div>
+    <table style="margin-top:26px">
+      <tr><th>Clip</th><th>Used in</th><th>Length</th><th>Notes</th></tr>
+      <tr><td>Iai stance (idle)</td><td class="m">01, 03</td><td class="m">loop 6s</td><td>Breathing and the wind in the hakama. The left thumb rests on the tsuba.</td></tr>
+      <tr><td>Koiguchi o kiru</td><td class="m">02A</td><td class="m">0.4s</td><td>The thumb pushes the tsuba and about 20cm of blade shows. Scroll-scrubbed.</td></tr>
+      <tr><td>Nukitsuke (draw + rising cut)</td><td class="m">02B</td><td class="m">0.9s</td><td>Low-left to high-right in one stroke, front foot steps forward. Scroll-scrubbed, reversible.</td></tr>
+      <tr><td>Chiburi + nōtō</td><td class="m">03</td><td class="m">2.2s</td><td>Flicks the blade clean, then sheathes it slowly. Plays on its own once the cut finishes.</td></tr>
+      <tr><td>Walk</td><td class="m">04, 05</td><td class="m">loop</td><td>Slow and deliberate. He walks ahead of the camera on the path, as a guide.</td></tr>
+      <tr><td>Turn to camera</td><td class="m">09</td><td class="m">1.6s</td><td>The first time he faces the viewer.</td></tr>
+      <tr><td>Hand to hilt</td><td class="m">09 hover</td><td class="m">0.5s</td><td>Interactive: plays when the email link is hovered, and reverses on leave.</td></tr>
+      <tr><td>Bow (rei)</td><td class="m">footer</td><td class="m">1.8s</td><td>Plays once when the footer comes into view, as the ending.</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <p class="label"><span class="k">絵</span>Shots</p>
+    <h2>Key frames</h2>
+    <p class="muted">Each frame is the hold pose of its shot. The camera notes describe the move into and out of it.</p>
+
+    <!-- 00 -->
+    <div class="shot">
+      <div class="shot-head"><span class="num">00</span><span class="kanji">研</span><h3>Prologue: the whetstone</h3><span class="tag">on load</span></div>
+      <div class="meta"><span>0 – 1.6s</span><span>Lens 55mm macro</span><span>Static, light moves</span></div>
+      <img class="frame" src="frames/s00.jpg" alt="Macro of a katana edge in darkness with a single point of light on it">
+      <div class="notes">
+        <div><h4>Action</h4><p>Black screen. A blade crosses the frame in macro, and a single glint slides along its edge as the assets load. The counter reads <code>064 / 100 · sharpening</code>.</p></div>
+        <div><h4>Transition out</h4><p>At 100 the glint reaches the tip and flares. The frame cuts on that flash to 01, which is already rendering behind it, so the loader feels like the first shot of the film and not a wait.</p></div>
+        <div><h4>Rules</h4><p>At most 1.6s, or 0.4s when the assets are cached. Skipped for returning visitors and for reduced motion. The hero HTML is in the DOM from the start for SEO.</p></div>
+      </div>
+    </div>
+
+    <!-- 01 -->
+    <div class="shot">
+      <div class="shot-head"><span class="num">01</span><span class="kanji">構</span><h3>Stance: the moon at his back</h3></div>
+      <div class="meta"><span>Scroll 0 – 6%</span><span>Lens 35mm</span><span>Low angle · slow push-in · pointer parallax</span></div>
+      <img class="frame" src="frames/s01.jpg" alt="Hero: samurai on a stone slab silhouetted against a large full moon, reflected in black water, with the hero copy on the left">
+      <div class="notes">
+        <div><h4>Frame</h4><p>A low angle from the water's edge. He stands on a stone slab, in silhouette against a huge full moon that is mirrored in still black water. The seams catch the light: the kasa rim and the shoulder wings.</p></div>
+        <div><h4>Motion</h4><p>Idle stance loop. The hakama moves in the wind, slow ripples cross the reflection, and the camera creeps in about 4% over 10s. The headline reveals line by line through a diagonal slash mask.</p></div>
+        <div><h4>Pointer</h4><p>The camera orbits ±4° toward the cursor. When the cursor nears him, he turns his head slightly (a 0.6s look-at), and nothing else. It should feel like he has noticed you.</p></div>
+      </div>
+    </div>
+
+    <!-- 02 -->
+    <div class="shot">
+      <div class="shot-head"><span class="num">02</span><span class="kanji">斬</span><h3>The cut</h3><span class="tag r">signature moment</span></div>
+      <div class="meta"><span>Scroll 6 – 15% · pinned</span><span>Lens 45 → 40mm</span><span>Dolly-in, low · 4° Dutch roll on the cut</span></div>
+      <div class="pair">
+        <figure><img class="frame" src="frames/s02a.jpg" alt="Low-angle close shot of the samurai against the moon, thumb pushing the sword guard, scabbard mouth ring glowing"><p class="cap">02A · Koiguchi: the seal breaks</p></figure>
+        <figure><img class="frame" src="frames/s02b.jpg" alt="The samurai in a lunge after a rising cut, a light trail behind the blade, and the whole frame split along a diagonal line"><p class="cap">02B · The page is cut along the blade</p></figure>
+      </div>
+      <div class="notes">
+        <div><h4>02A · Anticipation</h4><p>The first scroll pulls the camera down and in to a heroic low angle. His thumb pushes the tsuba. The koiguchi seam flares and 20cm of steel shows. The longer you hold here, the more tension builds: wind and sound drop out.</p></div>
+        <div><h4>02B · The cut</h4><p>The nukitsuke is scrubbed by scroll. Time drops to ×0.25 at the moment of the cut, and the blade leaves a short trail of light. On contact <em>the whole viewport is sliced</em> along the cut's diagonal: canvas and HTML split and slide apart, with an RGB-split flash on the edge.</p></div>
+        <div><h4>Rules</h4><p>About 0.9s of real time, so it never drags. Scrolling back up reverses it exactly: the halves rejoin and the blade returns to the saya. This is the only place on the site with chromatic aberration.</p></div>
+      </div>
+    </div>
+
+    <!-- 03 -->
+    <div class="shot">
+      <div class="shot-head"><span class="num">03</span><span class="kanji">昇</span><h3>Rise: the moon wanes</h3></div>
+      <div class="meta"><span>Scroll 15 – 24% · pinned</span><span>Lens 35 → 18mm</span><span>Crane up and back, 6m</span></div>
+      <img class="frame" src="frames/s03.jpg" alt="High wide shot: a waning crescent moon over black water with its reflection, the samurai tiny at the bottom">
+      <div class="notes">
+        <div><h4>Action</h4><p>He flicks the blade (chiburi) and sheathes it slowly (nōtō). The camera cranes up and away until he is a small figure at the bottom of the frame and the sky takes over.</p></div>
+        <div><h4>Moon</h4><p>The moon is a lit sphere, so it wanes physically: the light rotates around it and the crescent forms in front of you. Its reflection in the water wanes with it.</p></div>
+        <div><h4>Purpose</h4><p>This replaces today's empty spacer section. It is the breath after the strike, and it carries the camera, from high up, to the next set.</p></div>
+      </div>
+    </div>
+
+    <!-- 04 -->
+    <div class="shot">
+      <div class="shot-head"><span class="num">04</span><span class="kanji">人</span><h3>About: the first monolith</h3></div>
+      <div class="meta"><span>Scroll 24 – 36%</span><span>Lens 32mm</span><span>Crane down · slow truck right</span></div>
+      <img class="frame" src="frames/s04.jpg" alt="About section: copy and facts table on the left, a dark stone monolith with a glowing 人 on the right, the samurai standing small at its base">
+      <div class="notes">
+        <div><h4>Frame</h4><p>The camera comes down from the sky to a black stone monolith on the water. 人 is carved into it and lit from inside. He stands at its foot, small, facing it. That gives a sense of scale and a quiet portrait.</p></div>
+        <div><h4>Motion</h4><p>The kanji ignites stroke by stroke as the section enters: left stroke, then right, in true stroke order. The fact rows draw their rules left to right and the years count up.</p></div>
+        <div><h4>Monolith system</h4><p>Every section gets one monolith (人 道 戦 武 連), the same object in a different place. Arriving at a monolith means arriving at a section, so they replace the floating kanji labels.</p></div>
+      </div>
+    </div>
+
+    <!-- 05 -->
+    <div class="shot">
+      <div class="shot-head"><span class="num">05</span><span class="kanji">道</span><h3>Approach: walking the path</h3></div>
+      <div class="meta"><span>Scroll 36 – 50% · pinned</span><span>Lens 30mm</span><span>Truck forward along the walkway, about 25m</span></div>
+      <img class="frame" src="frames/s05.jpg" alt="A wooden walkway over black water leading to a 道 monolith, with stone lanterns along it; the near lantern is lit and the step cards Plan and Build are on screen">
+      <div class="notes">
+        <div><h4>Frame</h4><p>A wooden walkway runs out over the water with a light seam down its centre. Four stone lanterns (tōrō) stand along it, one per stage: Plan, Build, Ship, Sustain. The 道 monolith waits at the far end, under the crescent.</p></div>
+        <div><h4>Motion</h4><p>The section pins and scroll walks the camera down the path. He walks ahead of the camera, as a guide. Each lantern lights as you pass it: its card comes forward and the previous card settles back. A progress hairline runs along the bottom with a <code>01 / 04</code> counter.</p></div>
+        <div><h4>Mobile</h4><p>Not pinned. The camera holds a fixed three-quarter view and the lanterns light up as their cards cross the middle of the screen.</p></div>
+      </div>
+    </div>
+
+    <!-- 06 -->
+    <div class="shot">
+      <div class="shot-head"><span class="num">06</span><span class="kanji">戦</span><h3>Work: the sword rack</h3></div>
+      <div class="meta"><span>Scroll 50 – 66%</span><span>Lens 35mm</span><span>Near-static · small drift toward the open blade</span></div>
+      <img class="frame" src="frames/s06.jpg" alt="Work list on the left; on the right a katana rack holding four swords, the top one partly drawn with a red ring at its scabbard mouth">
+      <div class="notes">
+        <div><h4>Idea</h4><p>Four projects, four swords on a lacquered rack (katanakake). The list stays as real HTML <code>&lt;details&gt;</code> on the left. The rack on the right mirrors it: each row's sword sits on the same line as its title.</p></div>
+        <div><h4>Interaction</h4><p><em>Hover</em> a row and its sword slides a few centimetres out, with a glint along the edge. <em>Open</em> a row and the sword draws halfway, the scabbard ring turns blood-red, and the camera eases in. The result numbers count up.</p></div>
+        <div><h4>Restraint</h4><p>This is the reading section, so the light is low and the camera barely moves. Nothing animates while the user is reading text.</p></div>
+      </div>
+    </div>
+
+    <!-- 07 -->
+    <div class="shot">
+      <div class="shot-head"><span class="num">07</span><span class="kanji">武</span><h3>Toolkit: the tsuba ring</h3></div>
+      <div class="meta"><span>Scroll 66 – 76%</span><span>Lens 30mm</span><span>Low orbit around the ring, 40°</span></div>
+      <img class="frame" src="frames/s07.jpg" alt="Toolkit: four iron sword guards orbiting a steel core on a thin ring of light, with the tool groups listed along the bottom">
+      <div class="notes">
+        <div><h4>Frame</h4><p>Four iron sword guards (tsuba), one per group (Backend, Frontend, Database, DevOps), orbit a small steel core on a ring of light. Each is pierced in a different pattern, like a maker's mark.</p></div>
+        <div><h4>Motion</h4><p>Scroll turns the ring and orbits the camera. The tsuba nearest the camera lights its seam ring, and its group in the HTML grid below comes to full opacity. Hovering a group in the grid turns its tsuba to the front.</p></div>
+        <div><h4>Detail</h4><p>Up close, each tsuba carries its tool names engraved in small mono type around the rim, as a decal. You can read them on large screens, and they are decorative everywhere else.</p></div>
+      </div>
+    </div>
+
+    <!-- 08 -->
+    <div class="shot">
+      <div class="shot-head"><span class="num">08</span><span class="kanji">蝕</span><h3>Eclipse: the turn to red</h3><span class="tag r">grade change</span></div>
+      <div class="meta"><span>Scroll 76 – 86% · pinned</span><span>Lens 70 → 55mm</span><span>Tilt up to the moon · hold · tilt down</span></div>
+      <div class="pair">
+        <figure><img class="frame" src="frames/s08a.jpg" alt="Total eclipse: a black moon disc ringed by a thin bright corona"><p class="cap">08A · Totality</p></figure>
+        <figure><img class="frame" src="frames/s08b.jpg" alt="A full blood-red moon over red-tinted black water"><p class="cap">08B · Blood moon</p></figure>
+      </div>
+      <div class="notes">
+        <div><h4>Action</h4><p>The camera tilts up and the long lens flattens the moon until it fills the frame. The crescent closes to a new moon with a thin corona ring: totality. At this moment the page goes silent for a beat, with no wind.</p></div>
+        <div><h4>Grade</h4><p>The shadow passes off and leaves a full blood moon. The scene's grade shifts red: key light, fog, water and every seam (blade, kasa, koiguchi). UI accents follow the same shift. It should feel like the night has turned, not like a theme toggle.</p></div>
+        <div><h4>Return</h4><p>As the camera tilts down we are back at the stone slab from shot 01. The film closes where it started, under a different moon.</p></div>
+      </div>
+    </div>
+
+    <!-- 09 -->
+    <div class="shot">
+      <div class="shot-head"><span class="num">09</span><span class="kanji">連</span><h3>Contact: he turns to you</h3></div>
+      <div class="meta"><span>Scroll 86 – 100%</span><span>Lens 24mm</span><span>Wide · static · god rays toward camera</span></div>
+      <img class="frame" src="frames/s09.jpg" alt="Contact: a big headline on the left, a blood moon on the right with red light rays, and the samurai facing the viewer on the slab with his reflection in the water">
+      <div class="notes">
+        <div><h4>Frame</h4><p>The same slab as shot 01, now under a blood moon whose light streams toward the viewer. For the first time he has turned to face us. The headline gets the left two-thirds and he stands in the moon.</p></div>
+        <div><h4>Payoff</h4><p>Hovering the email makes his hand move to the hilt (anticipation). Clicking plays a red slash across the address, then opens the mail app. You came in on a draw, and you leave on the promise of one.</p></div>
+        <div><h4>Footer</h4><p>When the footer appears he bows (rei) once. "Back to top" plays the camera path in reverse at 4× speed: the moon returns to white and he is back in his stance.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <p class="label"><span class="k">色</span>Look</p>
+    <h2>Night ink, one moon, one red.</h2>
+    <div class="swatches">
+      <div class="sw"><i style="background:#05060a"></i><span>Sky #05060A</span></div>
+      <div class="sw"><i style="background:#040507"></i><span>Water #040507</span></div>
+      <div class="sw"><i style="background:#1c1c1e"></i><span>Stone #1C1C1E</span></div>
+      <div class="sw"><i style="background:#efe9de"></i><span>Moon #EFE9DE</span></div>
+      <div class="sw"><i style="background:#eaf2ff"></i><span>Seam light #EAF2FF</span></div>
+      <div class="sw"><i style="background:#c4453f"></i><span>Blood #C4453F</span></div>
+    </div>
+    <table style="margin-top:30px">
+      <tr><th>Element</th><th>Treatment</th></tr>
+      <tr><td>Key light</td><td>The moon is the only real light. It is always behind the subject, so silhouettes and rim light do the work. The fill is a faint cool bounce from the water.</td></tr>
+      <tr><td>Water</td><td>A true mirror under a dark veil, with slow ripple rings. It doubles the moon and the figure in every wide shot and anchors the "one world" feel.</td></tr>
+      <tr><td>Post</td><td>Soft bloom (seams, moon and blade only), a light vignette, constant fine film grain and ACES tone mapping. Chromatic aberration only during the cut.</td></tr>
+      <tr><td>Type and UI</td><td>Unchanged from today: Geist, Geist Mono and Noto Serif JP for kanji. The UI sits on the left over the darkest part of each frame. Every shot is composed with the subject on the right.</td></tr>
+      <tr><td>Light mode</td><td>To be decided. The proposal is a pale dawn: a mist-white sky, an ink-black silhouette and a grey moon. It is the same world with a different lighting preset, not a separate design.</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <p class="label"><span class="k">型</span>Build notes</p>
+    <table>
+      <tr><th>Layer</th><th>Plan</th></tr>
+      <tr><td>3D</td><td>three.js through React Three Fiber and drei, inside the current Next.js 16 app. Static export to GitHub Pages still works.</td></tr>
+      <tr><td>Camera</td><td>One master GSAP ScrollTrigger timeline over Lenis, which the site already uses. Each shot is a labelled range with its camera position, target, lens and roll. Character clips are scrubbed by the same timeline.</td></tr>
+      <tr><td>Character</td><td>A rigged glTF with the eight clips above, played through an AnimationMixer and scrubbed by scroll where marked. Seams are an emissive material on thin mesh strips, part of the model.</td></tr>
+      <tr><td>Performance</td><td>Sets stream in by distance. Three quality tiers: full, no reflections or bloom, and a static key-frame fallback. Three.js loads after the HTML paints. The scene pauses when the tab is hidden.</td></tr>
+      <tr><td>Accessibility</td><td>All content stays as real HTML. With <code>prefers-reduced-motion</code>: no pinning, no camera flights, and each section shows its key frame as a still that cross-fades in.</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <p class="label"><span class="k">問</span>Decisions for you</p>
+    <ol class="q">
+      <li><b>Character source.</b> Commission a modeller and animator for the samurai and the eight clips (best result, needs budget and a brief), adapt a licensed asset plus mocap clips (faster, less unique), or model it ourselves in Blender (slowest)?</li>
+      <li><b>Ending.</b> Should he turn to face the viewer at Contact, or stay in profile and keep the mystery?</li>
+      <li><b>Pinned scenes.</b> Four pinned scenes (02, 03, 05, 08) give the most cinematic version. Fewer pins mean less "film" and more "page". Keep all four?</li>
+      <li><b>Light mode and sound.</b> Keep light mode as a dawn preset or drop it? Sound in or out?</li>
+      <li><b>Next step.</b> When this is agreed, I'll build a playable prototype of 01 → 02 → 03 with a stand-in character, to lock the camera, the cut and performance before we commission any art.</li>
+    </ol>
+  </section>
+
+  <p class="cap" style="margin-top:80px">侍 · biairmal v4 storyboard · draft 02 · frames are previz renders with placeholder geometry (design/previz)</p>
+</div>
+</body>
+</html>
