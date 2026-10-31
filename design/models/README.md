@@ -12,7 +12,11 @@ SAMPLES=128 SHOTS=front,profile,low bl/bin/python menpo.py render export
 | --- | --- |
 | `menpo.py`: menpō with a hinged nose, cheek flanges, cord hooks, a white horsehair moustache, a 3-plate laced throat guard, black lacquer with edge wear and a red lacquer interior | Quality test. Renders in `renders/`. The GLB (about 27 MB with subdivision applied) still needs decimation and texture baking for the web. |
 
-The hooded head in the renders is only there for context and is excluded from the export.
+| `samurai_full.py`: the whole figure, built around `menpo.py`. Hooded head with the menpō, a lacquered kasa with a light-seam rim, a laced dō with a chest plate and shoulder straps, five laced kusazuri panels, sode, sleeves with kote splints and elbow plates, gloved hands with tekko, a pleated hakama, waraji sandals, and a katana and wakizashi with silk-wrapped hilts and sageo cords | v1, static ready stance with no rig yet. Renders in `renders/samurai_*`. Viewer in `viewer-samurai/`. |
+
+The menpō renders include a hooded head for context; it's excluded from the menpō export and is part of the full figure.
+
+Full figure: `SAMPLES=96 SHOTS=hero,bust bl/bin/python samurai_full.py render export` (expects `menpo.py` next to it). For the web, the 19 MB export goes through `gltf-transform weld → simplify --ratio 0.4 --error 0.0008 → quantize → dedup → prune`, which brings it to 6 MB.
 
 ## Phone viewer
 
