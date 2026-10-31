@@ -39,8 +39,14 @@ Artifacts can't serve `.glb` files, so the model ships inside `model.js` as base
 - skin weights computed from distance to the bones, per body region
 - IK hands and feet
 
-It keys two clips per frame from pose keys, bakes the IK into plain bone rotations and exports `ronin_rigged.glb`:
+It also adds spring-bone chains: six in the coat skirt and one under each sleeve.
+
+It keys four clips per frame from pose keys, with ease curves per segment (`strike` overshoots slightly), bakes the IK into plain bone rotations and exports `ronin_rigged.glb`:
 - `idle` (4 s loop)
-- `iai` (6.2 s): koiguchi → draw with saya-biki and a step → horizontal cut → zanshin → furikaburi → downward cut → chiburi → nōtō
+- `iai` (6.2 s): koiguchi → draw with saya-biki and a step → kiriage, a rising diagonal cut from the left hip to above the right shoulder that follows a true arc → zanshin → furikaburi → downward cut → chiburi → nōtō
+- `walk` (in-place loop)
+- `bow`
+
+The viewer simulates the spring chains live (verlet, with leg and torso capsule collisions), so the coat and sleeves swing in every clip. The Cloth button toggles it.
 
 Run: `bl/bin/python rig.py` (about 15 s). For the web the export goes through `weld → simplify 0.45 → resample → quantize → dedup → prune`, about 8.5 MB. Viewer in `viewer-rig/`.

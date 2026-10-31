@@ -39,8 +39,10 @@
   <div class="row">
     <button id="bIdle" aria-pressed="true">Idle</button>
     <button id="bIai" aria-pressed="false">Draw &amp; cut</button>
+    <button id="bWalk" aria-pressed="false">Walk</button>
+    <button id="bBow" aria-pressed="false">Bow</button>
     <button id="bSlow" aria-pressed="false">Slow-mo</button>
-    <button id="bSpin" aria-pressed="false">Spin</button>
+    <button id="bCloth" aria-pressed="true">Cloth</button>
     <button id="bLight" aria-pressed="false">Moonlight</button>
     <button id="bReset">Reset view</button>
   </div>
@@ -142,29 +144,98 @@ const bar = document.getElementById('bar');
 })();
 
 const toggle = (id, fn) => { const b = document.getElementById(id); b.addEventListener('click', () => { const v = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', v); fn(v); }); };
-let mixer, actions = {}, current, slow = false;
+let mixer, actions = {}, current, slow = false, springs = null;
+
+// ---- spring bones: the coat panels and the sleeve bags swing behind the body
+const _v1 = new THREE.Vector3(), _v2 = new THREE.Vector3(), _v3 = new THREE.Vector3(), _v4 = new THREE.Vector3(), _q1 = new THREE.Quaternion(), _q2 = new THREE.Quaternion();
+function setupSprings(root) {
+  const bone = (n) => root.getObjectByName(n);
+  const groups = {};
+  root.traverse((o) => { if (!o.isBone) return; const m = o.name.match(/^(coat_\d+|sleeve_[LR])_(\d+|end)$/); if (m) (groups[m[1]] ||= []).push(o); });
+  const PARAMS = { coat: { stiff: 1.4, drag: 0.3, grav: 0.15 }, sleeve: { stiff: 0.9, drag: 0.22, grav: 0.2 } };
+  const chains = [];
+  for (const [key, bones] of Object.entries(groups)) {
+    bones.sort((a, b) => (a.name.endsWith('end') ? 99 : +a.name.split('_').pop()) - (b.name.endsWith('end') ? 99 : +b.name.split('_').pop()));
+    const P = PARAMS[key.split('_')[0]];
+    const joints = [];
+    for (let i = 0; i < bones.length; i++) {
+      const b = bones[i], child = bones[i + 1] || null;
+      const tailLocal = child ? child.position.clone() : new THREE.Vector3(0, 0.05, 0);
+      joints.push({ b, child, rest: b.quaternion.clone(), tailLocal, len: tailLocal.length(), tail: new THREE.Vector3(), prev: new THREE.Vector3(), init: false });
+    }
+    chains.push({ joints, P });
+  }
+  // colliders: capsules around the legs and torso
+  const caps = [['thigh_L', 'shin_L', 0.085], ['thigh_R', 'shin_R', 0.085], ['shin_L', 'foot_L', 0.065], ['shin_R', 'foot_R', 0.065], ['hips', 'chest', 0.13]]
+    .map(([a, b, r]) => ({ a: bone(a), b: bone(b), r })).filter((c) => c.a && c.b);
+  const A = new THREE.Vector3(), Bv = new THREE.Vector3(), AB = new THREE.Vector3(), AP = new THREE.Vector3();
+  function collide(p, r) {
+    for (const c of caps) {
+      c.a.getWorldPosition(A); c.b.getWorldPosition(Bv); AB.subVectors(Bv, A); AP.subVectors(p, A);
+      const t = THREE.MathUtils.clamp(AP.dot(AB) / AB.lengthSq(), 0, 1);
+      const q = A.addScaledVector(AB, t); const d = p.distanceTo(q), min = c.r + r;
+      if (d < min && d > 1e-5) p.sub(q).multiplyScalar(min / d).add(q);
+    }
+  }
+  const head = new THREE.Vector3(), animTail = new THREE.Vector3(), gravity = new THREE.Vector3(0, -1, 0);
+  function step(dt) {
+    for (const { joints, P } of chains) {
+      for (const j of joints) {
+        j.b.quaternion.copy(j.rest);        // the clips keep these at rest; start from the animated pose
+        j.b.updateMatrixWorld(true);
+        j.b.getWorldPosition(head);
+        animTail.copy(j.tailLocal).applyMatrix4(j.b.matrixWorld);
+        if (!j.init) { j.tail.copy(animTail); j.prev.copy(animTail); j.init = true; }
+        const restDir = _v1.subVectors(animTail, head).normalize();
+        const vel = _v3.subVectors(j.tail, j.prev).multiplyScalar(1 - P.drag);
+        const next = _v4.copy(j.tail).add(vel).addScaledVector(restDir, P.stiff * dt).addScaledVector(gravity, P.grav * dt);
+        next.sub(head).setLength(j.len).add(head);
+        collide(next, 0.015);
+        next.sub(head).setLength(j.len).add(head);
+        j.prev.copy(j.tail); j.tail.copy(next);
+        // rotate the bone so its tail points at the simulated tail
+        const to = _v2.subVectors(j.tail, head).normalize();
+        _q1.setFromUnitVectors(restDir, to);
+        j.b.getWorldQuaternion(_q2); _q2.premultiply(_q1);
+        const pq = j.b.parent.getWorldQuaternion(new THREE.Quaternion()).invert();
+        j.b.quaternion.copy(pq.multiply(_q2));
+        j.b.updateMatrixWorld(true);
+      }
+    }
+  }
+  return {
+    update(dt) { const n = Math.max(1, Math.ceil(dt / (1 / 60))); for (let i = 0; i < n; i++) step(dt / n); },
+    reset() { for (const { joints } of chains) for (const j of joints) { j.init = false; j.b.quaternion.copy(j.rest); } },
+    count: chains.length,
+    debug() { return chains.map(({ joints }) => joints[0].b.name + ':' + joints.map((j) => (2 * Math.acos(Math.min(1, Math.abs(j.b.quaternion.dot(j.rest)))) * 57.3).toFixed(1)).join('/')).join(' '); },
+  };
+}
 const clock = new THREE.Clock();
 function setupAnim(g) {
   mixer = new THREE.AnimationMixer(g.scene);
   for (const c of g.animations) actions[c.name] = mixer.clipAction(c);
-  actions.iai.setLoop(THREE.LoopOnce); actions.iai.clampWhenFinished = true;
-  mixer.addEventListener('finished', (e) => { if (e.action === actions.iai) setTimeout(() => current === actions.iai && play('idle'), 900); });
+  for (const k of ['iai', 'bow']) { actions[k].setLoop(THREE.LoopOnce); actions[k].clampWhenFinished = true; }
+  mixer.addEventListener('finished', (e) => { const a = e.action; setTimeout(() => current === a && play('idle'), 700); });
+  springs = setupSprings(g.scene);
   play('idle');
-  window.__mixer = mixer; window.__actions = actions; window.__cam = camera; window.__controls = controls;
+  window.__mixer = mixer; window.__actions = actions; window.__springs = () => springs; window.__cam = camera; window.__controls = controls;
 }
 function play(name) {
   const next = actions[name]; if (!next) return;
   next.reset().setEffectiveWeight(1).play();
   if (current && current !== next) current.crossFadeTo(next, 0.35, false);
   current = next;
-  document.getElementById('bIdle').setAttribute('aria-pressed', name === 'idle');
-  document.getElementById('bIai').setAttribute('aria-pressed', name === 'iai');
-  document.getElementById('clipname').textContent = name === 'iai' ? 'Iai: draw, cut, cut, flick, sheathe' : 'Idle';
+  for (const [id, n] of [['bIdle', 'idle'], ['bIai', 'iai'], ['bWalk', 'walk'], ['bBow', 'bow']]) document.getElementById(id).setAttribute('aria-pressed', name === n);
+  document.getElementById('clipname').textContent = { idle: 'Idle', iai: 'Iai: rising diagonal cut, downward cut, flick, sheathe', walk: 'Walk (in place)', bow: 'Bow' }[name];
 }
 document.getElementById('bIdle').addEventListener('click', () => play('idle'));
 document.getElementById('bIai').addEventListener('click', () => play('iai'));
+document.getElementById('bWalk').addEventListener('click', () => play('walk'));
+document.getElementById('bBow').addEventListener('click', () => play('bow'));
+let clothOn = true;
+toggle('bCloth', (v) => { clothOn = v; if (!v && springs) springs.reset(); });
 toggle('bSlow', (v) => { slow = v; });
-toggle('bSpin', (v) => controls.autoRotate = v);
+
 toggle('bLight', (v) => {
   document.body.classList.toggle('night', v);
   scene.background.set(v ? 0x050506 : 0xdcdcde); scene.fog.color.set(v ? 0x050506 : 0xdcdcde); ground.material.color.set(v ? 0x060607 : 0xcfcfd1);
@@ -174,7 +245,14 @@ toggle('bLight', (v) => {
 document.getElementById('bReset').addEventListener('click', () => { camera.position.copy(HOME); controls.target.copy(TARGET); });
 
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
-renderer.setAnimationLoop(() => { const dt = clock.getDelta(); if (mixer) mixer.update(dt * (slow ? 0.3 : 1)); controls.update(); renderer.render(scene, camera); });
+renderer.setAnimationLoop(() => {
+  if (window.__clockPause) { controls.update(); renderer.render(scene, camera); return; }
+  const dt = Math.min(clock.getDelta(), 1 / 20) * (slow ? 0.3 : 1);
+  if (mixer) mixer.update(dt);
+  if (springs && clothOn) springs.update(dt);
+  controls.update(); renderer.render(scene, camera);
+});
+window.__step = (t) => { mixer.update(t); if (springs && clothOn) springs.update(t); };
 </script>
 </body>
 </html>

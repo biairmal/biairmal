@@ -89,6 +89,33 @@ for s, (hp, kn, an) in LEG.items():
     B[f'foot_{s}'] = (an, toe, f'shin_{s}', True, V((0, 0, 1)))
     B[f'ik_foot_{s}'] = (an, an + (toe - an).normalized() * 0.03, 'root', False, V((0, 0, 1)))
     B[f'pole_leg_{s}'] = (kn + V((0, -0.5, 0)), kn + V((0, -0.55, 0)), 'root', False, None)
+# coat: six hanging chains around the skirt, placed on the cloth itself
+vest_o = next(o for o in objs if o.name.split('.')[0] == 'vest')
+vc = np.empty(len(vest_o.data.vertices) * 3); vest_o.data.vertices.foreach_get('co', vc); VC = vc.reshape(-1, 3)
+VANG = np.arctan2(VC[:, 0], -VC[:, 1])
+COAT_ANG = [-2.6, -1.3, -0.5, 0.5, 1.3, 2.6]
+COAT_Z = [0.95, 0.84, 0.72, 0.6, 0.53]
+def coat_point(u, z):
+    m = (np.abs(np.angle(np.exp(1j * (VANG - u)))) < 0.22) & (np.abs(VC[:, 2] - z) < 0.035)
+    if m.sum() < 3:
+        r = 0.26; return V((r * math.sin(u), -0.8 * r * math.cos(u), z))
+    p = VC[m]; c = V((float(np.median(p[:, 0])), float(np.median(p[:, 1])), z))
+    h = V((c.x, c.y, 0)); return c - h.normalized() * 0.012 if h.length > 1e-4 else c
+CHAINS = {}
+for i, u in enumerate(COAT_ANG):
+    pts = [coat_point(u, z) for z in COAT_Z]
+    names = []
+    for k in range(len(pts) - 1):
+        nm = f'coat_{i}_{k}' if k < len(pts) - 2 else f'coat_{i}_end'
+        B[nm] = (pts[k], pts[k + 1], 'hips' if k == 0 else names[-1], k < len(pts) - 2, V((0, 0, 1)))
+        names.append(nm)
+    CHAINS[f'coat_{i}'] = names
+# sleeves: one short chain hanging under each elbow
+for s, (sh, el, wr) in ARM.items():
+    h0 = el + V((0, 0.03, -0.06)); h1 = h0 + V((0, 0.01, -0.1)); h2 = h1 + V((0, 0, -0.07))
+    B[f'sleeve_{s}_0'] = (h0, h1, f'upperarm_{s}', True, V((0, 1, 0)))
+    B[f'sleeve_{s}_end'] = (h1, h2, f'sleeve_{s}_0', False, V((0, 1, 0)))
+    CHAINS[f'sleeve_{s}'] = [f'sleeve_{s}_0', f'sleeve_{s}_end']
 B['katana'] = (G0, G0 + D0 * 0.1, 'root', True, E0)
 B['saya'] = (MOUTH, MOUTH + D0 * 0.1, 'hips', True, E0)
 
@@ -133,6 +160,26 @@ for o in objs:
     keep = np.argsort(-W, 1)[:, :3]
     mask = np.zeros_like(W); np.put_along_axis(mask, keep, 1, 1); W *= mask
     W /= W.sum(1, keepdims=True)
+    base = o.name.split('.')[0]
+    if base == 'vest':        # the skirt below the belt hangs from the coat chains
+        wc = np.clip((0.97 - P[:, 2]) / 0.2, 0, 1); wc = wc * wc * (3 - 2 * wc)
+        ang = np.arctan2(P[:, 0], -P[:, 1])
+        CW = []; cn = []
+        for i, u in enumerate(COAT_ANG):
+            da = np.abs(np.angle(np.exp(1j * (ang - u))))
+            wa = np.clip(1 - da / 0.85, 0, None) ** 2
+            bones = CHAINS[f'coat_{i}'][:-1]
+            Wb = np.stack([1 / (seg_dist(P, B[b][0], B[b][1]) + 0.02) ** 4 for b in bones], 1); Wb /= Wb.sum(1, keepdims=True)
+            for j, b in enumerate(bones): CW.append(wa * Wb[:, j]); cn.append(b)
+        CW = np.stack(CW, 1); tot = CW.sum(1, keepdims=True); CW = np.where(tot > 0, CW / np.maximum(tot, 1e-9), 0)
+        wc = np.where(tot[:, 0] > 0, wc, 0)
+        W = np.concatenate([W * (1 - wc)[:, None], CW * wc[:, None]], 1); names = names + cn
+    if base == 'sleeve':      # the hanging bag of the sleeve swings on its own chain
+        side = 'L' if P[:, 0].mean() > 0 else 'R'
+        d_axis = np.minimum(seg_dist(P, B[f'upperarm_{side}'][0], B[f'upperarm_{side}'][1]), seg_dist(P, B[f'forearm_{side}'][0], B[f'forearm_{side}'][1]))
+        below = P[:, 2] < B[f'upperarm_{side}'][1].z + 0.05
+        wc = np.clip((d_axis - 0.055) / 0.05, 0, 1) * 0.85 * below
+        W = np.concatenate([W * (1 - wc)[:, None], wc[:, None]], 1); names = names + [f'sleeve_{side}_0']
     for j, k in enumerate(names):
         idx = np.nonzero(W[:, j] > 0.01)[0]
         if not len(idx): continue
@@ -177,7 +224,7 @@ def basis(pos, Y, Z):
     Y = Y.normalized(); Z = (Z - Y * Z.dot(Y)).normalized(); X = Y.cross(Z)
     m = Matrix((X, Y, Z)).transposed().to_4x4(); m.translation = pos; return m
 def blend_m(a, b, t):
-    q = a.to_quaternion().slerp(b.to_quaternion(), t); p = a.translation.lerp(b.translation, t)
+    t = max(0.0, min(1.0, t)); q = a.to_quaternion().slerp(b.to_quaternion(), t); p = a.translation.lerp(b.translation, t)
     m = q.to_matrix().to_4x4(); m.translation = p; return m
 HIP_HEAD = B['hips'][0]
 def hips_delta(off, yaw, pitch):
@@ -189,7 +236,7 @@ def grip_hand(G, D, E, back=0.0):
     return basis(p - E * 0.075, E, D)
 def key_frame(f, P):
     """P: a pose dict in model space. Sets and keys every control bone for frame f."""
-    Hd = hips_delta(P['hip'], P['hy'], P['hp'])
+    Hd = hips_delta(P['hip'] + V((P['side'], 0, 0)), P['hy'], P['hp'])
     # hips
     pb['hips'].matrix = Hd @ REST['hips']
     # spine twist and lean (local rotations)
@@ -206,7 +253,9 @@ def key_frame(f, P):
     G = G.lerp(Gh, a); D = D.lerp(Dh, a).normalized(); E = E.lerp(Eh, a).normalized()
     pb['katana'].matrix = basis(G, D, E)
     # right hand: at rest, or on the grip
-    pb['ik_hand_R'].matrix = blend_m(REST['ik_hand_R'], grip_hand(G, D, E), P['wR'])
+    rest_R = Hd @ REST['ik_hand_R'] if P.get('hand_follow') else REST['ik_hand_R'].copy()
+    rest_R = Matrix.Translation(P['rsw']) @ rest_R
+    pb['ik_hand_R'].matrix = blend_m(rest_R, grip_hand(G, D, E), P['wR'])
     # left hand: on the saya by the mouth (thumb on the tsuba), or on the hilt behind the right
     mouth = Hd @ (MOUTH + D0 * P['s']); d0 = Hd.to_3x3() @ D0; e0 = Hd.to_3x3() @ E0
     saya_hand = basis(mouth + d0 * 0.05 - e0 * 0.07, e0, d0)
@@ -218,24 +267,30 @@ def key_frame(f, P):
         pb[bn].keyframe_insert('location', frame=f)
 
 REST_POSE = dict(G=G0, D=D0, E=E0, wR=0.0, wL=0.0, s=0.0, attach=1.0, hip=V((0, 0, 0)), hy=0.0, hp=0.0, lean=0.0, cy=0.0, hd=0.0, hturn=0.0,
-                 fR=V((0, 0, 0)), fL=V((0, 0, 0)))
+                 fR=V((0, 0, 0)), fL=V((0, 0, 0)), rsw=V((0, 0, 0)), side=0.0)
+def back_out(u, k=1.4):
+    u -= 1; return 1 + (k + 1) * u ** 3 + k * u ** 2
+EASE = {'smooth': smooth, 'strike': lambda u: back_out(u, 0.9), 'snap': lambda u: 1 - (1 - u) ** 3, 'lin': lambda u: u}
 def orient(D, E):
     return basis(V(), D, E).to_quaternion()
 def interp(keys, t):
     """keys: [(time, partial pose)]; values carry forward; eased between keys."""
-    full = []; cur = dict(REST_POSE)
+    full = []; cur = dict(REST_POSE); eases = []
     for tk, d in keys:
+        d = dict(d); eases.append(EASE[d.pop('ease', 'smooth')])
         cur = dict(cur); cur.update(d)
         if 'D' in d and 'E' not in d: cur['E'] = -V((0, 0, 1)).cross(cur['D'])
         full.append((tk, cur))
     if t <= full[0][0]: return full[0][1]
-    for (t0, a), (t1, b) in zip(full, full[1:]):
+    for i, ((t0, a), (t1, b)) in enumerate(zip(full, full[1:])):
         if t <= t1:
-            u = smooth((t - t0) / (t1 - t0)); out = {}
+            u = eases[i + 1]((t - t0) / (t1 - t0)); out = {}
             for k in a:
                 if k in ('D', 'E'): continue
                 out[k] = a[k] + (b[k] - a[k]) * u if not isinstance(a[k], Vector) else a[k].lerp(b[k], u)
-            q = orient(a['D'], a['E']).slerp(orient(b['D'], b['E']), u).to_matrix()
+            qa, qb = orient(a['D'], a['E']), orient(b['D'], b['E'])
+            dq = qa.rotation_difference(qb); ax, ang = dq.to_axis_angle()
+            q = (Quaternion(ax, ang * u) @ qa).to_matrix()     # slerp that may overshoot
             out['D'] = q.col[1].copy(); out['E'] = q.col[2].copy()
             return out
     return full[-1][1]
@@ -258,32 +313,67 @@ def idle_pose(t):
     return p
 
 draw = lambda s, out: G0 - D0 * (out - s)             # grip while the blade slides out of a saya pulled back by s
+# kiriage: a rising diagonal cut from his left hip to above his right shoulder
+F_ = V((0, -1, 0)); U_ = nd(-1, 0, 1.1)                # forward; up and to his right (his right is -X)
+ARC_C = V((-0.05, -0.24, 1.2))
+def arc(phi):
+    D = (-U_) * math.cos(phi) + F_ * math.sin(phi)
+    E = U_ * math.sin(phi) + F_ * math.cos(phi)
+    return dict(G=ARC_C + D * 0.42, D=D, E=E)
+PHI0, PHI1 = 0.35, 2.55
+T_CUT0, T_CUT1 = 1.12, 1.34
 IAI = [
     (0.0, {}),
-    (0.45, dict(wR=1.0, hd=0.08)),                                             # right hand to the hilt
-    (0.7, dict(G=G0 - D0 * 0.03, hip=V((0, -0.02, -0.02)), hp=0.03)),          # koiguchi: the seal breaks
-    (0.85, dict(fR=V((0, -0.16, 0.07)))),
-    (1.05, dict(s=0.2, G=draw(0.2, 0.72), hip=V((0, -0.12, -0.07)), hp=0.06, cy=0.35, lean=0.1, fR=V((0, -0.32, 0)))),
-    (1.1, dict(attach=0.0)),
-    (1.2, dict(G=V((0.05, -0.56, 1.22)), D=nd(1, -0.6, 0.05), cy=0.2)),       # nukitsuke: horizontal cut
-    (1.31, dict(G=V((-0.12, -0.6, 1.2)), D=nd(0, -1, 0.03), cy=0.0)),
-    (1.45, dict(G=V((-0.38, -0.42, 1.2)), D=nd(-0.85, -0.5, 0.05), cy=-0.32, hy=-0.1, s=0.05)),
-    (1.9, dict(s=0.0)),                                                         # zanshin
-    (2.25, dict(G=V((-0.02, -0.22, 1.72)), D=nd(0, 0.6, 0.8), E=nd(0, -0.8, 0.6), wL=1.0, cy=0.0, hy=0.0, lean=0.0, hd=-0.05)),  # furikaburi
-    (2.4, dict(G=V((-0.02, -0.24, 1.74)))),
-    (2.58, dict(G=V((0.0, -0.58, 1.05)), D=nd(0, -0.97, -0.25), E=nd(0, 0.25, -0.97), hip=V((0, -0.16, -0.11)), lean=0.18, hd=0.1)),  # kirioroshi
+    (0.45, dict(wR=1.0, hd=0.08, side=0.01)),                                  # right hand to the hilt
+    (0.7, dict(G=G0 - D0 * 0.03, hip=V((0, -0.02, -0.025)), hp=0.03, side=0.03)),   # koiguchi; weight onto the back foot
+    (0.85, dict(fR=V((0, -0.16, 0.08)), side=0.02, ease='snap')),
+    (1.04, dict(s=0.2, G=draw(0.2, 0.72), hip=V((0, -0.13, -0.08)), hp=0.07, cy=0.38, lean=0.12, fR=V((0, -0.34, 0)), side=-0.02)),  # draw, step lands
+    (1.08, dict(attach=0.0)),
+    (T_CUT0, dict(**arc(PHI0), cy=0.3, ease='snap')),
+    (T_CUT1, dict(**arc(PHI1), cy=-0.32, hy=-0.12, lean=0.02, s=0.06, hip=V((0, -0.15, -0.06)), hd=-0.04, side=-0.03, ease='strike')),
+    (1.9, dict(s=0.0, hip=V((0, -0.14, -0.07)))),                              # zanshin
+    (2.22, dict(G=V((-0.02, -0.22, 1.72)), D=nd(0, 0.6, 0.8), E=nd(0, -0.8, 0.6), wL=1.0, cy=0.0, hy=0.0, lean=-0.03, hd=-0.06, hip=V((0, -0.12, -0.05)))),  # furikaburi
+    (2.42, dict(G=V((-0.02, -0.18, 1.75)), D=nd(0, 0.75, 0.66), E=nd(0, -0.66, 0.75), lean=-0.05)),          # gather
+    (2.56, dict(G=V((0.0, -0.58, 1.04)), D=nd(0, -0.97, -0.25), E=nd(0, 0.25, -0.97), hip=V((0, -0.17, -0.12)), lean=0.2, hd=0.12, ease='strike')),  # kirioroshi
     (3.1, dict()),
-    (3.35, dict(G=V((-0.33, -0.38, 1.06)), D=nd(-0.5, -0.8, -0.35), wL=0.0, lean=0.1, hip=V((0, -0.12, -0.08)))),   # chiburi
+    (3.3, dict(G=V((-0.34, -0.37, 1.05)), D=nd(-0.5, -0.8, -0.35), wL=0.0, lean=0.1, hip=V((0, -0.12, -0.08)), ease='strike')),   # chiburi
     (3.55, dict()),
     (3.95, dict(s=0.15, G=draw(0.15, 0.72), D=D0, E=E0, cy=0.3, attach=0.0)),  # tip to the koiguchi
     (4.0, dict(attach=1.0)),
     (4.9, dict(s=0.0, G=G0, cy=0.05, hip=V((0, -0.08, -0.05)), lean=0.05)),     # nōtō: slide home, slowly
-    (5.15, dict(fR=V((0, -0.16, 0.07)), hip=V((0, -0.04, -0.02)))),
-    (5.4, dict(fR=V((0, 0, 0)), hip=V((0, 0, 0)), lean=0.0, cy=0.0, hp=0.0, hd=0.0)),
+    (5.15, dict(fR=V((0, -0.16, 0.08)), hip=V((0, -0.04, -0.02)), side=0.02)),
+    (5.4, dict(fR=V((0, 0, 0)), hip=V((0, 0, 0)), lean=0.0, cy=0.0, hp=0.0, hd=0.0, side=0.0)),
     (5.8, dict(wR=0.0)),
     (6.2, dict()),
 ]
+def iai_pose(t):
+    P = interp(IAI, t)
+    if T_CUT0 <= t <= T_CUT1:        # follow the arc itself, not a straight blend between its ends
+        u = EASE['strike']((t - T_CUT0) / (T_CUT1 - T_CUT0))
+        P.update(arc(PHI0 + (PHI1 - PHI0) * u))
+    return P
 
+WALK_T = 1.1
+def walk_pose(t):
+    ph = t / WALK_T * 2 * math.pi
+    p = dict(REST_POSE)
+    def foot(off):
+        q = (t / WALK_T + off) % 1
+        if q < 0.55: return V((0, -0.22 + 0.44 * q / 0.55, 0))
+        r = (q - 0.55) / 0.45; return V((0, 0.22 - 0.44 * smooth(r), 0.09 * math.sin(math.pi * r)))
+    p.update(fR=foot(0.0), fL=foot(0.5), hip=V((0, -0.02, -0.03 + 0.018 * math.cos(2 * ph))), side=0.025 * math.sin(ph + 0.3),
+             hy=0.08 * math.sin(ph), cy=-0.14 * math.sin(ph), lean=0.07, hd=0.02, rsw=V((0, -0.11 * math.sin(ph + math.pi), 0.02 * (1 - math.cos(ph + math.pi)))),
+             hturn=0.04 * math.sin(ph))
+    return p
+
+BOW = [
+    (0.0, {}),
+    (0.5, dict(rsw=V((0.04, -0.06, -0.02)))),
+    (1.2, dict(hand_follow=0, lean=0.55, hip=V((0, 0.06, -0.03)), hd=0.25, rsw=V((0.06, -0.2, -0.16)))),
+    (2.0, dict()),
+    (2.8, dict(lean=0.0, hip=V((0, 0, 0)), hd=0.0, rsw=V((0, 0, 0)))),
+    (3.2, dict()),
+]
 clips = {}
 rig.animation_data_create()
 # idle
@@ -291,10 +381,11 @@ act = bpy.data.actions.new('idle_ctrl'); rig.animation_data.action = act
 n_idle = 4 * FPS
 for f in range(n_idle + 1): key_frame(f + 1, idle_pose(f / FPS))
 clips['idle'] = (act, n_idle + 1)
-act = bpy.data.actions.new('iai_ctrl'); rig.animation_data.action = act
-n_iai = int(6.2 * FPS)
-for f in range(n_iai + 1): key_frame(f + 1, interp(IAI, f / FPS))
-clips['iai'] = (act, n_iai + 1)
+for name, fn, length in (('iai', iai_pose, 6.2), ('walk', walk_pose, WALK_T * 2), ('bow', lambda t: interp(BOW, t), 3.2)):
+    act = bpy.data.actions.new(name + '_ctrl'); rig.animation_data.action = act
+    n = int(round(length * FPS))
+    for f in range(n + 1): key_frame(f + 1, fn(f / FPS))
+    clips[name] = (act, n + 1)
 print('keyed', flush=True)
 
 # ------------------------------------------------------------------ bake IK into plain bone rotations, one action per clip
