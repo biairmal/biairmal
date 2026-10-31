@@ -13,3 +13,15 @@ SAMPLES=128 SHOTS=front,profile,low bl/bin/python menpo.py render export
 | `menpo.py`: menpō with a hinged nose, cheek flanges, cord hooks, a white horsehair moustache, a 3-plate laced throat guard, black lacquer with edge wear and a red lacquer interior | Quality test. Renders in `renders/`. The GLB (about 27 MB with subdivision applied) still needs decimation and texture baking for the web. |
 
 The hooded head in the renders is only there for context and is excluded from the export.
+
+## Phone viewer
+
+`viewer/index.html` is the 3D viewer published as a private claude.ai artifact. Rebuild its model:
+
+```bash
+bl/bin/python export_web.py                       # → /tmp/viewer/menpo.glb (subdivision level 1)
+npx @gltf-transform/cli weld menpo.glb w.glb && npx @gltf-transform/cli quantize w.glb q.glb && npx @gltf-transform/cli dedup q.glb model.glb
+python3 -c "import base64;open('viewer/model.js','w').write('export default \"'+base64.b64encode(open('model.glb','rb').read()).decode()+'\";')"
+```
+
+Artifacts can't serve `.glb` files, so the model ships inside `model.js` as base64. That file is git-ignored.

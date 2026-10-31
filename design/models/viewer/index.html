@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Menpō · 3D model viewer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Geist+Mono&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; height: 100%; background: #050506; color: #ededed; font-family: Geist, system-ui, sans-serif; overflow: hidden; -webkit-tap-highlight-color: transparent; }
+  canvas { display: block; touch-action: none; }
+  .ui { position: fixed; left: 0; right: 0; pointer-events: none; padding: max(16px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) 0 max(18px, env(safe-area-inset-left)); }
+  .top { top: 0; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .title { font-size: 15px; font-weight: 500; letter-spacing: -.01em; }
+  .sub { font: 11px/1.5 "Geist Mono", monospace; color: #8b8b8b; letter-spacing: .06em; text-transform: uppercase; margin-top: 4px; }
+  .bottom { bottom: 0; top: auto; padding-bottom: max(18px, env(safe-area-inset-bottom)); display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .row { display: flex; gap: 8px; pointer-events: auto; flex-wrap: wrap; justify-content: center; }
+  button { font: 500 13px Geist, system-ui, sans-serif; color: #ededed; background: rgba(20,20,22,.7); border: 1px solid #333; padding: 10px 14px; min-height: 40px; border-radius: 0; backdrop-filter: blur(6px); cursor: pointer; }
+  button[aria-pressed="true"] { background: #ededed; color: #0a0a0a; border-color: #ededed; }
+  .hint { font: 11px "Geist Mono", monospace; color: #6e6e6e; letter-spacing: .08em; text-transform: uppercase; }
+  #load { position: fixed; inset: 0; display: grid; place-items: center; font: 12px "Geist Mono", monospace; letter-spacing: .2em; color: #8b8b8b; }
+  #load b { display: block; width: 180px; height: 1px; background: #222; margin-top: 14px; overflow: hidden; }
+  #load i { display: block; height: 1px; width: 0; background: #ededed; transition: width .2s; }
+  .dot { display: inline-block; width: 6px; height: 6px; background: #c4453f; margin-right: 8px; vertical-align: 1px; }
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
+</head>
+<body>
+<div id="load"><div style="text-align:center">LOADING MODEL<b><i id="bar"></i></b></div></div>
+<div class="ui top">
+  <div><div class="title"><span class="dot"></span>Menpō: quality test</div><div class="sub">Built in Blender from a script · 5.4 MB</div></div>
+</div>
+<div class="ui bottom">
+  <div class="row">
+    <button id="bHead" aria-pressed="true">Head</button>
+    <button id="bSpin" aria-pressed="true">Spin</button>
+    <button id="bLight" aria-pressed="false">Moonlight</button>
+    <button id="bReset">Reset view</button>
+  </div>
+  <div class="hint">Drag to rotate · Pinch to zoom · Two fingers to pan</div>
+</div>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+document.body.prepend(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x050506);
+const camera = new THREE.PerspectiveCamera(30, innerWidth / innerHeight, 0.01, 20);
+const HOME = new THREE.Vector3(0.22, 0.03, 0.6).multiplyScalar(innerWidth < innerHeight ? 1.75 : 1);
+camera.position.copy(HOME);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(0, -0.03, 0.03);
+controls.enableDamping = true; controls.minDistance = 0.18; controls.maxDistance = 1.4;
+controls.autoRotate = true; controls.autoRotateSpeed = 1.2;
+
+// studio reflections: soft boxes the lacquer can mirror
+function studioEnv(moon) {
+  const es = new THREE.Scene();
+  es.add(new THREE.Mesh(new THREE.SphereGeometry(10, 32, 16), new THREE.MeshBasicMaterial({ color: moon ? 0x020306 : 0x07080a, side: THREE.BackSide })));
+  const box = (w, h, pos, c) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: c, side: THREE.DoubleSide })); m.position.copy(pos); m.lookAt(0, 0, 0); es.add(m); };
+  if (moon) { box(2.2, 2.2, new THREE.Vector3(-4, 3, -6), 0xdfe8ff); box(6, 0.4, new THREE.Vector3(0, -3, 6), 0x1a2030); }
+  else { box(4, 3, new THREE.Vector3(-5, 4, 5), 0xffffff); box(3, 5, new THREE.Vector3(6, 2, -3), 0xcfd8ff); box(8, 0.6, new THREE.Vector3(0, 7, 0), 0x777777); box(6, 1, new THREE.Vector3(0, -4, 4), 0x222222); }
+  return new THREE.PMREMGenerator(renderer).fromScene(es, 0.02).texture;
+}
+const envs = { studio: studioEnv(false), moon: studioEnv(true) };
+scene.environment = envs.studio;
+
+const key = new THREE.DirectionalLight(0xfff6ee, 1.6); key.position.set(-1, 1.2, 1.5); scene.add(key);
+const rim = new THREE.DirectionalLight(0xdbe6ff, 3.0); rim.position.set(1.2, 1, -1.4); scene.add(rim);
+const rim2 = new THREE.DirectionalLight(0xdbe6ff, 1.5); rim2.position.set(-1.4, 0.6, -1); scene.add(rim2);
+const amb = new THREE.HemisphereLight(0x30343c, 0x050505, 0.6); scene.add(amb);
+
+// materials, rebuilt by name for the web
+const MATS = {
+  lacquer_black: new THREE.MeshPhysicalMaterial({ color: 0x050506, roughness: 0.32, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.06, envMapIntensity: 1.1 }),
+  lacquer_red: new THREE.MeshPhysicalMaterial({ color: 0x7a1410, roughness: 0.35, clearcoat: 1, clearcoatRoughness: 0.08, envMapIntensity: 1.0 }),
+  silk: new THREE.MeshPhysicalMaterial({ color: 0xc9c5bd, roughness: 0.6, sheen: 1, sheenRoughness: 0.35, sheenColor: new THREE.Color(0xffffff), envMapIntensity: 0.6 }),
+  horsehair: new THREE.MeshPhysicalMaterial({ color: 0xe2e0db, roughness: 0.4, sheen: 0.6, sheenColor: new THREE.Color(0xffffff), envMapIntensity: 0.7 }),
+  iron: new THREE.MeshStandardMaterial({ color: 0x2a2928, metalness: 1, roughness: 0.42 }),
+};
+
+// stand-in hooded head
+const hoodMat = new THREE.MeshStandardMaterial({ color: 0x0c0c0e, roughness: 0.95 });
+const head = new THREE.Group();
+const skull = new THREE.Mesh(new THREE.SphereGeometry(1, 64, 32), hoodMat); skull.scale.set(0.066, 0.112, 0.086); skull.position.set(0, 0.012, -0.006); head.add(skull);
+const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.2, 48), hoodMat); neck.position.set(0, -0.12, -0.012); head.add(neck);
+scene.add(head);
+
+const bar = document.getElementById('bar');
+(async () => {
+  bar.style.width = '35%';
+  const b64 = (await import('./model.js')).default;
+  bar.style.width = '75%';
+  const bin = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+  new GLTFLoader().parse(bin.buffer, '', (g) => {
+    g.scene.traverse((o) => {
+      if (o.isMesh) {
+        const n = o.material.name;
+        o.material = MATS[n] || (n.includes('red') ? MATS.lacquer_red : n.includes('silk') ? MATS.silk : n.includes('hair') ? MATS.horsehair : n.includes('iron') ? MATS.iron : MATS.lacquer_black);
+        o.material.side = THREE.DoubleSide;
+      }
+    });
+    scene.add(g.scene);
+    document.getElementById('load').remove();
+    window.__ready = true;
+  }, (err) => { document.getElementById('load').textContent = 'Could not load the model.'; console.error(err); });
+})();
+
+const toggle = (id, fn) => { const b = document.getElementById(id); b.addEventListener('click', () => { const v = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', v); fn(v); }); };
+toggle('bHead', (v) => head.visible = v);
+toggle('bSpin', (v) => controls.autoRotate = v);
+toggle('bLight', (v) => {
+  scene.environment = v ? envs.moon : envs.studio;
+  key.intensity = v ? 0.15 : 1.6; rim.intensity = v ? 4.5 : 3.0; rim2.intensity = v ? 0.6 : 1.5; amb.intensity = v ? 0.25 : 0.6;
+});
+document.getElementById('bReset').addEventListener('click', () => { camera.position.copy(HOME); controls.target.set(0, -0.03, 0.03); });
+
+addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+renderer.setAnimationLoop(() => { controls.update(); renderer.render(scene, camera); });
+</script>
+</body>
+</html>
