@@ -1,0 +1,265 @@
+==============================================================================
+BIAIRMAL v6 · THE BLOOD MOON LAKE · ASSET PROMPTS (plain text)
+==============================================================================
+
+How to use: each asset below has a READY-TO-PASTE PROMPT (the shared style
+is already included), a NEGATIVE PROMPT, and EXPORT NOTES for after you generate.
+Copy everything between the "--- copy ---" and "--- end ---" lines.
+
+Reference images: design/storyboard-v6/frames/ (b01-b06, map).
+
+==============================================================================
+TECHNICAL SPEC (applies to every model)
+==============================================================================
+- Format: glTF 2.0 binary (.glb), PBR metallic-roughness, one file per asset.
+- Units/axes: 1 unit = 1 metre, Y up, the asset faces +Z.
+- Pivot: base centre on the ground (y = 0) unless a note says otherwise.
+- Textures: base colour (sRGB), normal (OpenGL, +Y), packed ORM (R=AO, G=roughness, B=metalness). Emissive only where noted.
+- Texture size: hero 2048 px, props 1024 px, small items 512 px.
+- Keep the material and object names given in the export notes; the site looks them up by name.
+- Two versions: desktop at the triangle budget, and name-mobile.glb at about 25-30% of it (same UVs and materials).
+- No baked lighting, no AO in the albedo, no red tint, no moon colour.
+- Avoid transparency except paper and reed cards (use alpha-clip).
+
+==============================================================================
+SHARED NEGATIVE PROMPT (use with every asset)
+==============================================================================
+--- copy ---
+cartoon, chibi, anime, toy, plastic, low-poly faceted look, oversaturated, neon, sci-fi, fantasy armour, gold, dragons, ornate filigree, baked shadows, coloured lighting, red tint, text, watermark, logo, blurry texture, noisy topology, floating geometry, non-manifold mesh
+--- end ---
+
+==============================================================================
+2.1 THE RONIN: RONIN.GLB · RIGGED AND ANIMATED
+==============================================================================
+--- copy ---
+Full-body 3D character of a lone Japanese ronin swordsman, 1.75 m tall, standing in a relaxed, ready A-pose. No armour. He wears layered, worn clothing, all in black and charcoal: A long sleeveless outer coat (haori-style vest) to mid-shin, with a ragged, frayed hem, side slits, and a soft rolled hood collar around the neck. A dark kimono with wide sleeves underneath, with a slightly lighter grey under-collar crossing left over right at the chest. Loose dark hakama-style trousers gathered at the shin into spiral cloth leg wraps (kyahan), dark tabi socks and straw waraji sandals. Wrapped forearms and dark fingerless gloves. At the waist, a dark obi with a thick twisted grey rope belt tied in a hanging knot at the front left, a loop of prayer beads (juzu: mostly black, with every ninth bead off-white), and a small cloth pouch at the right hip. A katana and a wakizashi thrust through the belt at the left hip, hilts forward and angled down-back. Black lacquer scabbards, black iron tsuba, hilts wrapped in dark silk cord, and white sageo cords with small tassels. On his head: a wide, shallow, ribbed conical straw hat (kasa) lacquered black, with a slightly drooping brim and thin chin cords. Under it, a black lacquered menpō face mask covering nose, cheeks and chin, with a stern down-turned mouth, a white horsehair moustache and a red-lacquered interior. A dark hood covers the head under the hat, so no skin is visible. Fabric with fine weave, frayed edges, dusty worn patches and realistic fold detail in the normal maps. Matte cloth contrasted with glossy lacquer. Stylised-realistic Japanese Edo-period aesthetic, cinematic and restrained. Physically based materials with neutral, un-tinted albedo. A monochrome palette: black lacquer, charcoal timber, grey stone, off-white paper and silk. Subtle wear and age: worn edges, faint dust, fine surface detail in the normal maps rather than the geometry. Clean, game-ready topology. No text, logos or signatures. No baked lighting, no ambient occlusion in the albedo, no coloured light. Neutral studio presentation on a plain grey background.
+--- end ---
+EXPORT NOTES:
+  - Budget: 45k triangles LOD0 / 12k LOD1 · 4 × 2048 texture sets (body cloth, gear, head, weapons)
+  - Rig and animation
+  - Humanoid skeleton, Mixamo / Unreal-compatible bone naming (hips, spine ×3, neck, head, arms with fingers, legs with toes).
+  - Extra bones:
+  - katana and saya, so the sword can be drawn from the scabbard. The katana needs a full steel blade hidden inside the saya.
+  - Cloth chains: coat_0…coat_5, six chains of four bones each, hanging around the coat skirt. sleeve_L/sleeve_R, two-bone chains under each sleeve. The engine simulates these live.
+  - Skin weights clean at the shoulders, hips and knees, with the cloth weighted to the chains.
+  - Animations (30 fps, in place, no root motion):
+  - idle (required): a 4–6 s loop. Calm breathing, a subtle weight shift, the left hand resting on the scabbard by the tsuba.
+  - iai (optional): ~6 s. The thumb breaks the scabbard seal, a step forward as he draws, a rising diagonal cut from the left hip to above the right shoulder, a hold, a blade flick, then a slow re-sheathe. Mocap preferred.
+  - Materials (names): cloth_vest, cloth_kimono, cloth_under, cloth_trousers, cloth_wraps, cloth_obi, rope, bead_dark, bead_light, kasa_lacquer, lacquer_black, lacquer_red (mask interior), horsehair, silk, ito_wrap, iron, blade_steel, seam_light.
+  - Light seams: add thin emissive strips (material seam_light, white, emissive 1.0) along:
+  - the kasa rim
+  - the front edges of the coat
+  - the mask's mouth slit
+  - the scabbard mouths (koiguchi)
+  - They should be hairline-thin, about 1–2 mm.
+
+==============================================================================
+3.1 STONE LANTERN (TŌRŌ): LANTERN.GLB
+==============================================================================
+--- copy ---
+A traditional Japanese stone lantern (kasuga-dōrō style), 2.1 m tall. A hexagonal base, a slender round post, a platform, a square light box (hibukuro) with open windows on all four sides, a wide hexagonal roof with gently upturned corners, and a jewel finial. Weathered grey granite with moss in the crevices, chipped edges and water staining near the base. Stylised-realistic Japanese Edo-period aesthetic, cinematic and restrained. Physically based materials with neutral, un-tinted albedo. A monochrome palette: black lacquer, charcoal timber, grey stone, off-white paper and silk. Subtle wear and age: worn edges, faint dust, fine surface detail in the normal maps rather than the geometry. Clean, game-ready topology. No text, logos or signatures. No baked lighting, no ambient occlusion in the albedo, no coloured light. Neutral studio presentation on a plain grey background.
+--- end ---
+EXPORT NOTES:
+  - Budget: 3k / 800 · 1024 px
+  - Pivot at the base. Name the inside faces of the light box lantern_window (it will be emissive warm light). Add an empty or node named light_anchor at the centre of the light box.
+
+==============================================================================
+3.2 LANTERN FOOTING: LANTERN_BASE.GLB
+==============================================================================
+--- copy ---
+A low square block of rough-cut dark granite, 1.0 × 0.5 × 1.0 m, standing in water. Wet-looking lower third (darker, glossier), algae line at the waterline, rough chiselled top. Stylised-realistic Japanese Edo-period aesthetic, cinematic and restrained. Physically based materials with neutral, un-tinted albedo. A monochrome palette: black lacquer, charcoal timber, grey stone, off-white paper and silk. Subtle wear and age: worn edges, faint dust, fine surface detail in the normal maps rather than the geometry. Clean, game-ready topology. No text, logos or signatures. No baked lighting, no ambient occlusion in the albedo, no coloured light. Neutral studio presentation on a plain grey background.
+--- end ---
+EXPORT NOTES:
+  - Budget: 600 / 200 · 512 px
+
+==============================================================================
+3.3 STEPPING STONES: STEPPING_STONES.GLB (5 VARIANTS IN ONE FILE)
+==============================================================================
+--- copy ---
+Five flat natural river stones for crossing water, each about 0.8–1.0 m across and 0.2 m thick. Irregular rounded shapes, smooth worn tops, rougher wet sides, dark grey granite with subtle lighter flecks. Stylised-realistic Japanese Edo-period aesthetic, cinematic and restrained. Physically based materials with neutral, un-tinted albedo. A monochrome palette: black lacquer, charcoal timber, grey stone, off-white paper and silk. Subtle wear and age: worn edges, faint dust, fine surface detail in the normal maps rather than the geometry. Clean, game-ready topology. No text, logos or signatures. No baked lighting, no ambient occlusion in the albedo, no coloured light. Neutral studio presentation on a plain grey background.
+--- end ---
+EXPORT NOTES:
+  - Budget: 400 each / 120 · 1024 px shared
+  - Name them step_0 to step_4.
+
+==============================================================================
+3.4 HIS STONE: HIS_STONE.GLB
+==============================================================================
+--- copy ---
+One larger flat standing stone emerging just above still water, 1.3 × 0.26 × 1.1 m. A smooth, slightly concave top where a person stands, worn soft by time, and darker wet sides. Dark granite. Stylised-realistic Japanese Edo-period aesthetic, cinematic and restrained. Physically based materials with neutral, un-tinted albedo. A monochrome palette: black lacquer, charcoal timber, grey stone, off-white paper and silk. Subtle wear and age: worn edges, faint dust, fine surface detail in the normal maps rather than the geometry. Clean, game-ready topology. No text, logos or signatures. No baked lighting, no ambient occlusion in the albedo, no coloured light. Neutral studio presentation on a plain grey background.
+--- end ---
+EXPORT NOTES:
+  - Budget: 800 / 250 · 1024 px
+  - Pivot at the waterline, with the top surface at y = 0.13.
+
+==============================================================================
+3.5 LANTERN WALKWAY: WALKWAY_SEGMENT.GLB
+==============================================================================
+--- copy ---
+A 5.2 m long segment of a low wooden walkway over water: weathered cedar planks 1.5 m wide laid across two beams, on four round wooden posts going down into the water. Grey, sun-bleached, slightly warped planks with nail heads and gaps between boards. Dark, wet posts with an algae line. Stylised-realistic Japanese Edo-period aesthetic, cinematic and restrained. Physically based materials with neutral, un-tinted albedo. A monochrome palette: black lacquer, charcoal timber, grey stone, off-white paper and silk. Subtle wear and age: worn edges, faint dust, fine surface detail in the normal maps rather than the geometry. Clean, game-ready topology. No text, logos or signatures. No baked lighting, no ambient occlusion in the albedo, no coloured light. Neutral studio presentation on a plain grey background.
+--- end ---
+EXPORT NOTES:
+  - Budget: 2k / 600 · 1024 px
+  - The segment must tile end-to-end along Z. Add a hairline groove down the centre of the planks. Name its faces seam_light.
+
+==============================================================================
+3.6 HOUSE ON THE FAR SHORE: HOUSE.GLB
+==============================================================================
+--- copy ---
+A small, simple traditional Japanese wooden house (minka / teahouse), 9 m wide, 6 m deep, set on low stone footings with an engawa veranda along the front. Dark charred timber posts and beams (yakisugi). A front wall of six sliding shōji panels with a black wooden lattice and off-white paper. A hipped roof with deep eaves, dark grey ceramic tiles and a ridge. Two stone steps up to the veranda. Restrained, rustic, weathered. Stylised-realistic Japanese Edo-period aesthetic, cinematic and restrained. Physically based materials with neutral, un-tinted albedo. A monochrome palette: black lacquer, charcoal timber, grey stone, off-white paper and silk. Subtle wear and age: worn edges, faint dust, fine surface detail in the normal maps rather than the geometry. Clean, game-ready topology. No text, logos or signatures. No baked lighting, no ambient occlusion in the albedo, no coloured light. Neutral studio presentation on a plain grey background.
+--- end ---
+EXPORT NOTES:
+  - Budget: 25k / 6k · 2048 px
+  - Name the shōji paper paper (it will be emissive). Name the lattice lattice. Name the two centre panels door_L and door_R as separate objects. The interior can be an empty dark box. Name the ridge line seam_light.
+
+==============================================================================
+3.7 WEAPON STAND WITH WEAPONS: WEAPONS.GLB
+==============================================================================
+--- copy ---
+A low black-lacquered wooden sword stand (katanakake) with three horizontal tiers, 1.5 m wide. Resting on it, from top to bottom: a katana (blade length 0.72 m) in a black lacquer scabbard, a wakizashi (0.50 m), and a tantō (0.27 m). Each has a black iron tsuba, a hilt wrapped in dark silk cord over white rayskin, and a thin silver ring at the scabbard mouth. Leaning on the right of the stand: a yumi, the tall asymmetric Japanese longbow (2.1 m), black lacquered bamboo with a taut white string. Beside it, a black lacquer quiver (yebira) holding six arrows with white fletching. Stylised-realistic Japanese Edo-period aesthetic, cinematic and restrained. Physically based materials with neutral, un-tinted albedo. A monochrome palette: black lacquer, charcoal timber, grey stone, off-white paper and silk. Subtle wear and age: worn edges, faint dust, fine surface detail in the normal maps rather than the geometry. Clean, game-ready topology. No text, logos or signatures. No baked lighting, no ambient occlusion in the albedo, no coloured light. Neutral studio presentation on a plain grey background.
+--- end ---
+EXPORT NOTES:
+  - Budget: 12k / 3k · 2048 px
+  - Make each weapon a separate object: katana, wakizashi, tanto, yumi, quiver. Each blade must exist inside its scabbard as a separate mesh (*_blade), so it can slide out. Pivot the stand at its base centre.
+
+==============================================================================
+3.8 TAMESHIGIRI TARGETS: TARGETS.GLB
+==============================================================================
+--- copy ---
+A test-cutting target for Japanese swordsmanship (tameshigiri): a tightly rolled straw tatami-omote mat, 0.22 m in diameter, standing upright on a simple wooden stand with a square base and a vertical spike. The mat has been cut cleanly through on a steep diagonal. The lower part stands on the stand, showing a crisp, pale cut face with visible straw layers. The severed upper section lies on the sand beside it. Stylised-realistic Japanese Edo-period aesthetic, cinematic and restrained. Physically based materials with neutral, un-tinted albedo. A monochrome palette: black lacquer, charcoal timber, grey stone, off-white paper and silk. Subtle wear and age: worn edges, faint dust, fine surface detail in the normal maps rather than the geometry. Clean, game-ready topology. No text, logos or signatures. No baked lighting, no ambient occlusion in the albedo, no coloured light. Neutral studio presentation on a plain grey background.
+--- end ---
+EXPORT NOTES:
+  - Budget: 1.5k each / 400 · 1024 px shared
+  - Provide four variations with different cut heights and angles, and the fallen tops at different rotations: target_0 to target_3. Name the cut faces cut_face.
+
+==============================================================================
+3.9 KAGARIBI (FIRE BASKET): BRAZIER.GLB
+==============================================================================
+--- copy ---
+A traditional Japanese iron fire basket (kagaribi): an open cage basket of forged iron straps on top of a tall tripod of three iron legs, 1.6 m tall in total. Charcoal and split wood inside. Blackened, rusted, heat-discoloured iron. Stylised-realistic Japanese Edo-period aesthetic, cinematic and restrained. Physically based materials with neutral, un-tinted albedo. A monochrome palette: black lacquer, charcoal timber, grey stone, off-white paper and silk. Subtle wear and age: worn edges, faint dust, fine surface detail in the normal maps rather than the geometry. Clean, game-ready topology. No text, logos or signatures. No baked lighting, no ambient occlusion in the albedo, no coloured light. Neutral studio presentation on a plain grey background.
+--- end ---
+EXPORT NOTES:
+  - Budget: 2k / 600 · 1024 px
+  - Leave the flames out. The engine adds the fire. Add a node named fire_anchor at the top of the fuel.
+
+==============================================================================
+3.10 PINE TREE: PINE.GLB
+==============================================================================
+--- copy ---
+A windswept Japanese black pine (kuromatsu) growing on a lakeshore, 7.5 m tall. A thick, twisted, leaning trunk with deeply fissured dark bark. One long horizontal branch reaching out over the water. Foliage pruned into flat, layered cloud-pads (niwaki style), made of alpha-clipped needle cards. Stylised-realistic Japanese Edo-period aesthetic, cinematic and restrained. Physically based materials with neutral, un-tinted albedo. A monochrome palette: black lacquer, charcoal timber, grey stone, off-white paper and silk. Subtle wear and age: worn edges, faint dust, fine surface detail in the normal maps rather than the geometry. Clean, game-ready topology. No text, logos or signatures. No baked lighting, no ambient occlusion in the albedo, no coloured light. Neutral studio presentation on a plain grey background.
+--- end ---
+EXPORT NOTES:
+  - Budget: 15k / 4k · 2048 px (bark) + 1024 px (needle cards)
+  - The long branch must extend about 8 m sideways from the trunk, toward +X. It frames the top of the hero and contact shots.
+
+==============================================================================
+3.11 REED CLUMPS: REEDS.GLB (3 VARIANTS)
+==============================================================================
+--- copy ---
+Clumps of tall wetland reeds (ashi / common reed) growing from shallow water. Thin vertical stalks 0.7–2.2 m tall, some bent, some with feathery seed heads at the top. Dark and dry, almost black-brown. Stylised-realistic Japanese Edo-period aesthetic, cinematic and restrained. Physically based materials with neutral, un-tinted albedo. A monochrome palette: black lacquer, charcoal timber, grey stone, off-white paper and silk. Subtle wear and age: worn edges, faint dust, fine surface detail in the normal maps rather than the geometry. Clean, game-ready topology. No text, logos or signatures. No baked lighting, no ambient occlusion in the albedo, no coloured light. Neutral studio presentation on a plain grey background.
+--- end ---
+EXPORT NOTES:
+  - Budget: 1.5k each / 500 · 1024 px (alpha-clipped cards)
+  - Name them reeds_small, reeds_medium and reeds_tall. Pivot at the water level. They render mostly as silhouettes, so the outline matters more than the texture.
+
+==============================================================================
+4.1 MOUNTAIN RIDGES: RIDGE_NEAR.PNG, RIDGE_MID.PNG, RIDGE_FAR.PNG
+==============================================================================
+--- copy ---
+A horizontal panoramic silhouette of forested Japanese mountain ridges at night, flat solid shape only, with a soft irregular top edge, a few pine-tree bumps and gentle saddles. Pure black on a transparent background, no detail inside the shape, no sky, no moon, tileable horizontally.
+--- end ---
+EXPORT NOTES:
+  - 4096 × 1024, transparent PNG, silhouette only.
+  - Generate three with different profiles: near = taller and jagged, mid = rolling, far = low and smooth. The engine tints them for aerial perspective.
+
+==============================================================================
+4.2 MOON SURFACE: MOON_ALBEDO.JPG
+==============================================================================
+--- copy ---
+An equirectangular texture map of the full moon's surface: maria, craters and highlands, in neutral grey tones, evenly lit with no shadows or terminator. Seamless at the left and right edges.
+--- end ---
+EXPORT NOTES:
+  - 2048 × 1024, equirectangular.
+  - Keep it grey. The engine colours it blood red.
+
+==============================================================================
+4.3 WATER NORMALS: WATER_NORMAL_1.JPG, WATER_NORMAL_2.JPG
+==============================================================================
+--- copy ---
+A seamless tileable normal map of a calm lake surface with gentle wind ripples, OpenGL format.
+--- end ---
+EXPORT NOTES:
+  - 1024 × 1024, tileable.
+  - Make 1 broad and soft, and 2 finer and more choppy.
+
+==============================================================================
+4.4 GROUND: SAND_*.JPG, SHORE_ROCK_*.JPG
+==============================================================================
+[prompt 1 of 2]
+--- copy ---
+Damp dark lakeshore sand with small pebbles and footprints washed smooth.
+--- end ---
+[prompt 2 of 2]
+--- copy ---
+Wet dark granite shoreline rock, rough, with water staining.
+--- end ---
+EXPORT NOTES:
+  - 1024, tileable PBR sets (albedo, normal, ORM).
+
+==============================================================================
+OPTIONAL: AUDIO (loopable or one-shot, 48 kHz, mono unless noted)
+==============================================================================
+[ambient_lake.wav: loop, 60 s, stereo]
+--- copy ---
+Night lake ambience: still water lapping softly, distant wind through reeds, occasional insects.
+--- end ---
+[fire.wav: loop, 20 s]
+--- copy ---
+A crackling wood fire in an iron brazier, close.
+--- end ---
+[draw.wav: one-shot]
+--- copy ---
+A katana drawn from a lacquered wooden scabbard, a soft metallic hiss.
+--- end ---
+[cut.wav: one-shot]
+--- copy ---
+A sharp blade cutting through rolled straw, a single clean swish and thud.
+--- end ---
+[sheathe.wav: one-shot]
+--- copy ---
+A sword slowly slid home into its scabbard, ending in a soft click.
+--- end ---
+
+==============================================================================
+DELIVERY
+==============================================================================
+Put the files in the website repo under public/experimental/v6/:
+
+public/experimental/v6/
+  ronin.glb              ronin-mobile.glb
+  lantern.glb            lantern-mobile.glb
+  lantern_base.glb
+  stepping_stones.glb
+  his_stone.glb
+  walkway_segment.glb
+  house.glb              house-mobile.glb
+  weapons.glb            weapons-mobile.glb
+  targets.glb
+  brazier.glb
+  pine.glb               pine-mobile.glb
+  reeds.glb
+  ridge_near.png  ridge_mid.png  ridge_far.png
+  moon_albedo.jpg
+  water_normal_1.jpg  water_normal_2.jpg
+  audio/ (optional)
+
+Total budget after compression: 6 MB or less on desktop, 2.5 MB or less on phones.
+Export uncompressed if you can; I compress everything before committing.
+
+CHECKLIST
+[ ] Every model is a real-world size in metres, Y-up, faces +Z, with its pivot at the base.
+[ ] Material and object names match the export notes.
+[ ] No baked lighting, red tint or moon colour in any texture.
+[ ] Ronin: the idle clip loops, katana_blade exists inside the scabbard, and the cloth chain bones are present.
+[ ] -mobile versions exist for ronin, lantern, house, weapons and pine.
+[ ] The walkway segment tiles seamlessly along Z.
