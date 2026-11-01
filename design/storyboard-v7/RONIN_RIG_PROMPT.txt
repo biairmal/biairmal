@@ -1,0 +1,208 @@
+==============================================================================
+BIAIRMAL v7 · RONIN · RIG + ANIMATION PROMPT (plain text)
+==============================================================================
+
+How to use
+- Part 1 is a complete brief for an AI agent that can work in Blender (or a
+  similar tool). Copy everything between "--- copy ---" and "--- end ---".
+- Part 2 has short text-to-motion prompts, one per animation clip. Use them if
+  your rigging tool generates motion from text (Mixamo-style auto-rig plus an
+  AI motion generator).
+- Attach the original model file as the input:
+  ronin_lod0_45k.glb (the 31 MB original you generated).
+  Don't use the compressed copy in the website repo: it uses meshopt and WebP,
+  which many tools can't import.
+
+
+==============================================================================
+PART 1 · FULL BRIEF FOR AN AI AGENT
+==============================================================================
+--- copy ---
+You are rigging and animating a game-ready 3D character for a scroll-driven
+three.js website. Work in Blender 4.x and deliver a single glTF binary (.glb).
+
+INPUT
+- File: ronin_lod0_45k.glb. A Japanese ronin swordsman in an A-pose. One
+  merged mesh named "output_unwrapped", about 46k triangles. One material,
+  "BakedMaterial", with base colour and metallic-roughness textures at
+  4096 px. There is no skeleton and no animation.
+- The model is normalised to about 1.9 units tall, centred on the origin. In
+  glTF axes it is Y-up and faces +Z.
+- His katana and wakizashi are modelled fused into the body mesh, thrust
+  through the belt at his LEFT hip, hilts forward and angled down-back. There
+  is no blade inside either scabbard.
+
+GOAL
+The character stands on one spot for the whole film. He never walks. He
+needs exactly two things: a calm idle, and one iai-jutsu draw that ends in a
+rising diagonal cut. The draw is scrubbed by the page's scroll position, so
+it must look good when played slowly, frame by frame, and backwards.
+
+STEP 1 · SCALE, ORIENTATION, PIVOT
+- Scale him to 1.75 m tall (1 unit = 1 m).
+- Put the origin at ground level, between his feet.
+- He faces +Z in glTF (-Y in Blender). Apply all transforms.
+
+STEP 2 · SEPARATE THE KATANA
+- Cut the KATANA (the longer sword: hilt, tsuba and scabbard) out of the body
+  mesh into its own objects:
+  "katana_hilt" (tsuka + tsuba + habaki) and "katana_saya" (scabbard).
+  Cleanly cap the holes left in the body and the belt.
+- Model a new "katana_blade": a curved single-edged blade, 0.72 m long, about
+  3 cm wide at the base, tapering to a kissaki tip, with a ridge line and a
+  bright polished-steel material named "blade_steel" (metallic 1.0,
+  roughness 0.12). Seat it inside the scabbard so it's hidden at rest.
+- Match the baked texture on the separated hilt and scabbard (keep the same
+  UVs and material). The wakizashi stays fused to the body.
+- If the scabbard can't be separated cleanly, model a matching black lacquer
+  scabbard and hide the original under it.
+
+STEP 3 · SKELETON
+- A standard humanoid skeleton with Mixamo-compatible names (mixamorig:Hips,
+  Spine, Spine1, Spine2, Neck, Head, LeftShoulder, LeftArm, LeftForeArm,
+  LeftHand + five fingers with three joints each, RightShoulder ... RightHand
+  + fingers, LeftUpLeg, LeftLeg, LeftFoot, LeftToeBase, and the right leg
+  likewise).
+- Extra bones:
+  * "katana": parent = root (not the hand), so the animation can hand it from
+    the scabbard to the hand. Its head is at the tsuba, and its +Y axis points
+    along the blade toward the tip. The website draws the slash trail along
+    this bone's +Y axis, so the axis must be exact.
+  * "saya": parent = Hips. It sits at the scabbard mouth, with +Y along the
+    scabbard toward its tail. Skin katana_saya to it.
+  * Cloth chains (simulated live on the website, so leave them un-animated):
+    "coat_0" ... "coat_5": six chains of four bones (coat_N_0 ... coat_N_2,
+    then coat_N_end), hanging around the coat skirt from the waist to the
+    hem, evenly spaced around the body. Parent = Hips.
+    "sleeve_L_0", "sleeve_L_end" and "sleeve_R_0", "sleeve_R_end": two-bone
+    chains hanging under each elbow inside the wide sleeves. Parent = the
+    upper arm.
+- Skin katana_blade and katana_hilt 100% to the "katana" bone.
+
+STEP 4 · WEIGHTS
+- Smooth, clean deformation at the shoulders, elbows, wrists, hips and knees.
+- The coat skirt below the belt is weighted to the coat chains, blending into
+  Hips / Spine above the belt. The sleeve bags are weighted to the sleeve
+  chains (about 85%) blending to the arm.
+- The kasa (hat), menpō (mask), moustache and hood follow the Head 100%.
+- The belt, beads, pouch and wakizashi follow the Hips.
+- Hard items must not stretch: hat, mask, sword guards and the beads.
+- Test the full range of the iai below. Nothing may pass through the body.
+  Watch the right arm against the hat brim when the arm is raised.
+
+STEP 5 · ANIMATIONS (30 fps, in place, no root motion, Y-up)
+
+Clip "idle": 4.0 s (120 frames), seamless loop
+- Calm standing ready stance, feet shoulder-width, weight slightly forward.
+- Left hand rests on the katana scabbard just behind the tsuba, thumb against
+  the guard. Right arm relaxed at his side.
+- Slow breathing in the chest and shoulders. A tiny weight shift. The head
+  turns a few degrees and back. Subtle and dignified, nothing fidgety.
+
+Clip "iai": 2.6 s (78 frames), plays once and holds its last frame
+The timing is exact: the website syncs the camera and the slash effect to
+these frames.
+- f0–f13 (0.00–0.45 s): from the idle pose, the right hand moves to the
+  katana hilt and grips it. The left hand holds the scabbard.
+- f13–f21 (0.45–0.70 s): KOIGUCHI. The left thumb pushes the tsuba and about
+  3 cm of blade shows. The body settles, knees soften, eyes on the target.
+  Frame 21 is the HERO POSE: he holds this tension while the page is at the
+  top. It must read clearly as "about to draw".
+- f21–f31 (0.70–1.04 s): THE DRAW. The front (right) foot steps forward. The
+  left hand pulls the scabbard BACK (saya-biki) while the right hand draws
+  the blade out, edge up, and the hips start to rotate.
+- f31–f34 (1.04–1.12 s): the tip clears the scabbard mouth.
+- f34–f40 (1.12–1.34 s): KIRIAGE, the cut. One fast RISING DIAGONAL cut from
+  low at his LEFT hip, across the front of his body, to high above his RIGHT
+  shoulder, with the arm fully extended at the end. The blade sweeps a clean
+  arc in roughly one plane. Hips and shoulders unwind into it, with a slight
+  overshoot at the end.
+- f40–f78 (1.34–2.60 s): ZANSHIN. He holds the finished cut, blade high and to
+  the right, body still. A very slow settle and breath. The left hand stays
+  at the scabbard on his hip.
+- During the whole clip his feet stay planted after the step. No sliding.
+
+Clip "noto" (optional): 3.0 s (90 frames), plays once
+- From the last frame of "iai": a small blade flick to the side (chiburi),
+  then the tip finds the scabbard mouth and the blade slides slowly home
+  (noto), ending in the idle pose.
+
+Motion quality
+- Grounded, economical, real kenjutsu. Motion capture or mocap-quality
+  keyframes, not floaty game moves.
+- The cut must be FAST (0.2 s) and then completely still. The contrast is the
+  point.
+- It must look correct when scrubbed slowly and played in reverse.
+
+STEP 6 · MATERIALS
+- Keep "BakedMaterial" for everything except the new blade ("blade_steel").
+- Optional: thin emissive strips (material "seam_light", white, emissive
+  strength 1.0, about 1–2 mm wide) along the hat rim and the scabbard mouth.
+
+STEP 7 · EXPORT
+- glTF binary (.glb), Y-up, apply modifiers, include the skins and all
+  animations as separate named actions ("idle", "iai", "noto"). Use the "NLA
+  tracks" or "Actions" export mode, so each clip is exported as its own
+  animation.
+- Export TWO files:
+  ronin.glb: the full mesh, textures downscaled to 2048 px.
+  ronin-mobile.glb: the mesh decimated to about 15k triangles, textures at
+  1024 px, the same skeleton, weights and animations.
+- Don't apply Draco, meshopt or KTX2 compression. I'll compress afterwards.
+
+STEP 8 · VALIDATION (report each item)
+- [ ] Height is 1.75 m, the origin is between the feet, and he faces +Z in the
+      glTF.
+- [ ] Bones exist and are named exactly: katana, saya, coat_0_0 ... coat_5_end,
+      sleeve_L_0, sleeve_L_end, sleeve_R_0, sleeve_R_end, and the
+      mixamorig humanoid set.
+- [ ] The katana bone's +Y points from the tsuba to the blade tip in every
+      frame.
+- [ ] katana_blade is hidden inside the scabbard in "idle" and in frames 0–21
+      of "iai", and fully drawn from frame 34 on.
+- [ ] "idle" loops with no pop. "iai" frame 21 is the hero pose and frame 40
+      is the end of the cut.
+- [ ] Nothing passes through the body or the hat during "iai".
+- [ ] Both files open in https://gltf-viewer.donmccurdy.com and play all
+      clips.
+- [ ] Report the triangle count and the file size of each file.
+--- end ---
+
+
+==============================================================================
+PART 2 · SHORT TEXT-TO-MOTION PROMPTS (one per clip)
+==============================================================================
+Use these with an auto-rig + AI-motion tool. Set the length and frame rate
+as noted, and export in place (no root motion).
+
+[idle: 4 s loop, 30 fps]
+--- copy ---
+A Japanese samurai standing still in a calm, ready stance, feet shoulder-width apart, left hand resting on the sword scabbard at his left hip with the thumb on the guard, right arm relaxed at his side. Slow, deep breathing, a very subtle weight shift, the head turning slightly and back. Dignified and patient, minimal movement, seamless loop.
+--- end ---
+
+[iai: 2.6 s, 30 fps, plays once and holds]
+--- copy ---
+A Japanese swordsman performs an iaijutsu quick-draw from a standing stance. His right hand grips the sword hilt at his left hip and his left thumb pushes the guard to break the seal. He steps forward with the right foot, pulls the scabbard back with the left hand and draws the blade in one motion, then makes a single very fast rising diagonal cut from his low left hip up across his body to high above his right shoulder, arm fully extended. He freezes in that finishing pose and holds completely still, with calm breathing. Realistic kenjutsu, grounded, no flourish, feet planted.
+--- end ---
+
+[noto (optional): 3 s, 30 fps]
+--- copy ---
+A Japanese swordsman, holding his katana raised after a cut, flicks the blade sharply to the side to clean it, then slowly brings the blade across his body and slides it back into the scabbard at his left hip with deliberate control, finishing in a calm standing stance with his left hand resting on the scabbard.
+--- end ---
+
+Timing the website relies on, if your tool lets you edit keys after
+generating:
+  iai 0.70 s (frame 21): seal broken, the hero pose, about to draw
+  iai 1.12 s (frame 34): blade fully out, the cut starts
+  iai 1.34 s (frame 40): the cut ends, arm extended up and to the right
+If the generated timing differs, write down these three moments (in seconds)
+and send them to me with the files. I'll remap the website to match.
+
+
+==============================================================================
+DELIVERY
+==============================================================================
+Send me (or put in the website repo under public/experimental/v6/):
+  ronin.glb
+  ronin-mobile.glb
+  plus the three iai timings above, if they changed.
