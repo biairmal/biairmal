@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="node_modules/@fontsource/noto-serif-jp/400.css">
+<link rel="stylesheet" href="node_modules/@fontsource/noto-serif-jp/600.css">
+<link rel="stylesheet" href="node_modules/@fontsource/geist/400.css">
+<link rel="stylesheet" href="node_modules/@fontsource/geist/500.css">
+<link rel="stylesheet" href="node_modules/@fontsource/geist-mono/400.css">
+<style>
+  html,body{margin:0;background:#000;overflow:hidden}
+  #stage{position:relative;width:1600px;height:900px;overflow:hidden}
+  canvas{display:block}
+  #ui{position:absolute;inset:0;color:#ededed;font-family:Geist,sans-serif;pointer-events:none}
+  .mono{font-family:"Geist Mono",monospace}
+  .jp{font-family:"Noto Serif JP",serif}
+  .lbl{font:12px/1 "Geist Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:#8b8b8b;display:flex;gap:12px;align-items:center}
+  .lbl .k{font:17px/1 "Noto Serif JP",serif;color:#ededed;letter-spacing:0}
+  .muted{color:#a3a3a3}
+  .nav{position:absolute;top:0;left:0;right:0;height:96px;display:flex;align-items:center;justify-content:space-between;padding:0 160px;font-size:15px}
+  .btn{display:inline-flex;align-items:center;height:56px;padding:0 30px;font-size:16px;font-weight:500}
+</style>
+<script type="importmap">{"imports":{"three":"./node_modules/three/build/three.module.js","three/addons/":"./node_modules/three/examples/jsm/"}}</script>
+</head><body>
+<div id="stage"><div id="ui"></div></div>
+<script type="module" src="scene4.js"></script>
+</body></html>

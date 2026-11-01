@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>biairmal · Storyboard v6 · The Blood Moon Lake</title>
+<style>
+  :root { --bg: #0a0a0a; --fg: #ededed; --muted: #a0a0a0; --faint: #6e6e6e; --line: rgba(237,237,237,.12); --blood: #c4453f; --warm: #e0826e;
+    --mono: "Geist Mono", ui-monospace, Menlo, Consolas, monospace; --sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; --jp: "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", serif; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.6 var(--sans); }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 56px 28px 120px; }
+  .label { font: 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--faint); display: flex; gap: 10px; align-items: center; margin: 0 0 18px; }
+  .label .k { font: 16px/1 var(--jp); color: var(--fg); letter-spacing: 0; }
+  .dot { width: 6px; height: 6px; background: var(--blood); display: inline-block; }
+  h1 { font-size: clamp(38px, 6.4vw, 80px); line-height: 1.02; letter-spacing: -.05em; font-weight: 500; margin: 18px 0 22px; }
+  h2 { font-size: clamp(26px, 3.4vw, 42px); letter-spacing: -.035em; font-weight: 500; margin: 0 0 14px; line-height: 1.1; }
+  h3 { font-size: 24px; letter-spacing: -.02em; font-weight: 500; margin: 0; }
+  p { margin: 0 0 12px; }
+  .muted { color: var(--muted); }
+  .lede { max-width: 780px; color: var(--muted); font-size: 18px; line-height: 1.65; }
+  section { margin-top: 110px; }
+  img.frame, img.hero { display: block; width: 100%; border: 1px solid var(--line); background: #000; }
+  img.hero { margin-top: 44px; }
+  .cap { font: 11px/1.5 var(--mono); color: var(--faint); letter-spacing: .06em; margin-top: 10px; text-transform: uppercase; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+  .grid3 > div { background: var(--bg); padding: 22px; }
+  .grid3 b { display: block; font-weight: 500; margin-bottom: 8px; }
+  .grid3 span { color: var(--muted); font-size: 14px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 12px 18px 12px 0; border-top: 1px solid var(--line); vertical-align: top; }
+  th { font: 10px/1.6 var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--faint); font-weight: 400; }
+  td { color: #d0d0d0; }
+  td:first-child { white-space: nowrap; color: var(--fg); }
+  .shot { padding: 56px 0; border-top: 1px solid var(--line); }
+  .shot-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 6px; flex-wrap: wrap; }
+  .num { font: 12px/1 var(--mono); color: var(--faint); }
+  .kanji { font: 26px/1 var(--jp); }
+  .meta { font: 11px/1.5 var(--mono); color: var(--faint); letter-spacing: .06em; text-transform: uppercase; margin: 8px 0 22px; }
+  .meta span { margin-right: 18px; }
+  .notes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 26px; }
+  .notes h4 { font: 10px/1 var(--mono); text-transform: uppercase; letter-spacing: .1em; color: var(--faint); font-weight: 400; margin: 0 0 10px; padding-top: 12px; border-top: 1px solid var(--line); }
+  .notes p { font-size: 14px; color: #cfcfcf; line-height: 1.6; }
+  .tag { display: inline-block; font: 10px/1 var(--mono); padding: 4px 6px; border: 1px solid var(--line); color: var(--muted); letter-spacing: .06em; text-transform: uppercase; vertical-align: 3px; }
+  .tag.w { border-color: rgba(217,168,104,.5); color: var(--warm); }
+  .chain { display: flex; flex-wrap: wrap; gap: 0; margin-top: 26px; border: 1px solid var(--line); }
+  .chain div { flex: 1 1 140px; padding: 16px 14px; border-right: 1px solid var(--line); position: relative; }
+  .chain div:last-child { border-right: 0; }
+  .chain b { display: block; font: 15px/1.3 var(--jp); font-weight: 400; margin-bottom: 6px; }
+  .chain small { display: block; font: 11px/1.45 var(--mono); color: var(--faint); }
+  .chain i { font-style: normal; color: var(--warm); }
+  ol.q { padding-left: 20px; } ol.q li { margin-bottom: 12px; color: #cfcfcf; } ol.q b { color: var(--fg); font-weight: 500; }
+  @media (max-width: 900px) { .grid3, .notes { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <p class="label"><span class="dot"></span>Design phase · storyboard v6 · revised from your notes on v5</p>
+  <h1>The Blood Moon Lake.</h1>
+  <p class="lede">A lake under a blood moon. He stands on a single stone in the water with his reflection beneath him. A path of stepping stones and a lantern walkway crosses the lake to the far shore, where his house stands on land with his weapons on the veranda and his practice targets on the beach. Every section is a scene that <em>shows</em> what the section is about, and every camera move passes layers at different depths, so the parallax is always there.</p>
+  <img class="hero" src="frames/b01.jpg" alt="Hero: through dark reeds, the samurai stands on a stone in the lake against a huge blood moon, reflected in the water, with stepping stones leading to him and lanterns and a house beyond">
+  <p class="cap">Shot 01 · real-time previz render · placeholder geometry, the ronin from v3</p>
+
+  <section>
+    <p class="label"><span class="k">改</span>Your notes → what changed</p>
+    <table>
+      <tr><th>You said</th><th>v6</th></tr>
+      <tr><td>Blood moon by default</td><td>The moon is red from the first frame. The whole grade is built around it: red sky and water, black silhouettes, warm lanterns as the only other colour.</td></tr>
+      <tr><td>Each scene reflects its section</td><td><b>About</b> shows <em>him</em>, full-figure with his reflection. <b>Work</b> shows four straw targets cut clean through, one per shipped project. <b>Toolkit</b> shows his weapons, one per skill group.</td></tr>
+      <tr><td>Tools are the samurai's</td><td>Katana = Backend, wakizashi = Frontend, tantō = Database, yumi (bow) = DevOps &amp; cloud. They sit on a stand on the veranda, silhouetted against glowing paper.</td></tr>
+      <tr><td>A lake setting, house not on the water</td><td>The house stands on land on the far shore. The lake is the centre of the world.</td></tr>
+      <tr><td>Samurai reflection on the water</td><td>He stands on a low stone just above the water, so his reflection is under him in every shot that sees him.</td></tr>
+      <tr><td>Keep the path in the water</td><td>Stepping stones lead out to him, then a plank walkway with four lanterns (Plan, Build, Ship, Sustain) continues across to the far shore.</td></tr>
+      <tr><td>Parallax when the camera moves</td><td>The world is built in depth layers: reeds and a pine branch close to the lens, him and the path in the middle, the far shore, then three mountain ridges and the moon. Any camera move slides them past each other (see the pair below).</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <p class="label"><span class="k">層</span>Parallax</p>
+    <h2>Same shot, camera moved 2.4 m.</h2>
+    <p class="muted" style="max-width:780px">Compare the two frames. The reeds and stepping stones jump, he shifts against the moon, the house and lanterns slide less, and the ridges and moon barely move. On the site, every scroll and every pointer move does this, continuously.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <figure style="margin:0"><img class="frame" src="frames/b01.jpg" alt="Hero frame"><p class="cap">Camera at rest</p></figure>
+      <figure style="margin:0"><img class="frame" src="frames/b01p.jpg" alt="The same frame with the camera moved right: he has moved left of the moon, the house and lanterns have shifted, the foreground reeds have left the frame"><p class="cap">Camera 2.4 m right</p></figure>
+    </div>
+    <table style="margin-top:22px">
+      <tr><th>Layer</th><th>Distance</th><th>What's in it</th></tr>
+      <tr><td>Foreground</td><td>1–5 m</td><td>Reed clumps on the near shore, the pine's branch and cloud-pads, stepping stones. Blurred by depth of field and moving fastest.</td></tr>
+      <tr><td>Subject</td><td>10–20 m</td><td>Him on his stone, his reflection, the lantern walkway.</td></tr>
+      <tr><td>Far shore</td><td>40–50 m</td><td>The house, the beach with the targets and the brazier, reeds.</td></tr>
+      <tr><td>Distance</td><td>110–300 m</td><td>Three mountain ridges, each lighter than the one in front (aerial perspective), and the moon behind them.</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <p class="label"><span class="k">地</span>The world</p>
+    <h2>One lake, one camera path.</h2>
+    <img class="frame" src="frames/map.jpg" alt="Top view of the lake: the near shore at right with reeds and pine, the stepping stones to his stone, the lantern walkway crossing to the far shore at left with the targets and the house; the red camera path linking the six shots">
+    <div class="chain">
+      <div><b>岸 Near shore</b><small>through the reeds · <i>Hero</i></small></div>
+      <div><b>人 His stone</b><small>him and his reflection · <i>About</i></small></div>
+      <div><b>道 The walkway</b><small>4 lanterns · <i>Approach</i></small></div>
+      <div><b>戦 The beach</b><small>4 cut targets · <i>Work</i></small></div>
+      <div><b>武 The veranda</b><small>4 weapons · <i>Toolkit</i></small></div>
+      <div><b>連 The lake</b><small>back to the start · <i>Contact</i></small></div>
+    </div>
+    <p class="muted" style="margin-top:18px;max-width:780px">The site keeps its current section order. The camera crosses the lake as you read, then returns to the near shore for Contact, so the film ends where it started.</p>
+  </section>
+
+  <section>
+    <p class="label"><span class="k">絵</span>Shots</p>
+    <h2>Key frames</h2>
+
+    <div class="shot">
+      <div class="shot-head"><span class="num">01</span><span class="kanji">岸</span><h3>Hero: him, the moon, the water</h3></div>
+      <div class="meta"><span>Hero</span><span>48mm</span><span>Low from the near shore · slow push through the reeds</span></div>
+      <img class="frame" src="frames/b01.jpg" alt="Hero frame">
+      <div class="notes">
+        <div><h4>Frame</h4><p>From the near shore, through the reeds. He stands on his stone in front of the blood moon, reflected in the water, with stepping stones leading out to him. Lanterns and the house glow beyond.</p></div>
+        <div><h4>Motion</h4><p>The camera pushes slowly in through the reeds, and they slide past the lens. Mist drifts and the water ripples. He only breathes. The pointer moves the camera sideways a little, for parallax.</p></div>
+        <div><h4>Optional</h4><p>One iai on the first scroll: the moon makes it a pure silhouette, which hides animation flaws. Off by default.</p></div>
+      </div>
+    </div>
+
+    <div class="shot">
+      <div class="shot-head"><span class="num">02</span><span class="kanji">人</span><h3>About: him</h3></div>
+      <div class="meta"><span>About</span><span>32mm</span><span>Low on the water, beside his stone · slow arc</span></div>
+      <img class="frame" src="frames/b02.jpg" alt="About frame: the samurai full-figure on his stone, the moon and its reflection beside him, lanterns and the house behind">
+      <div class="notes">
+        <div><h4>Frame</h4><p>The camera comes down almost to the water, close beside him, and looks up. It's his full figure, with the moon's reflection breaking in the ripples beside him. A portrait of the person the section is about.</p></div>
+        <div><h4>Light</h4><p>A red rim from the moon behind him, and a faint warm fill from the lanterns. The fill is what shows the kasa, the mask and the sword, instead of a flat silhouette.</p></div>
+        <div><h4>Motion</h4><p>A slow arc of about 20° while you read. The background slides behind him, which is the parallax.</p></div>
+      </div>
+    </div>
+
+    <div class="shot">
+      <div class="shot-head"><span class="num">03</span><span class="kanji">道</span><h3>Approach: the lantern walkway</h3><span class="tag w">pinned</span></div>
+      <div class="meta"><span>Approach</span><span>30mm</span><span>Dolly along the walkway, eye height · ~35m</span></div>
+      <img class="frame" src="frames/b03.jpg" alt="Approach frame: down the plank walkway across the red lake, four stone lanterns on alternating sides, the moon low ahead">
+      <div class="notes">
+        <div><h4>Idea</h4><p>The path from plan to production, literally a path. Four lanterns stand on alternating sides: Plan, Build, Ship, Sustain. The section pins and the camera walks the path. As it passes each lantern, that stage's card rises.</p></div>
+        <div><h4>Parallax</h4><p>The near lantern sweeps past the lens, the far ones slide slowly, and the moon stays put. It's the clearest sense of travel in the film.</p></div>
+        <div><h4>Lighting</h4><p>All four lanterns are lit from the start, with glowing windows, a glow and a pool of light on the planks and water. Nothing waits for the camera to come near.</p></div>
+      </div>
+    </div>
+
+    <div class="shot">
+      <div class="shot-head"><span class="num">04</span><span class="kanji">戦</span><h3>Work: four clean cuts</h3></div>
+      <div class="meta"><span>Work</span><span>36mm</span><span>On the far beach · slow track past the targets</span></div>
+      <img class="frame" src="frames/b04.jpg" alt="Work frame: four straw targets on wooden stands, each cut through on the diagonal with the top lying on the sand, lit by an iron fire basket, the lake and moon behind">
+      <div class="notes">
+        <div><h4>Idea</h4><p>Four rolled-straw targets (tameshigiri) on the beach, each cut through in one diagonal stroke, the top lying on the sand. One target per shipped project: finished work, done cleanly.</p></div>
+        <div><h4>Interaction</h4><p>Opening a project row brings its target forward. The cut face glows briefly along its edge (the light seam), and the camera eases toward it.</p></div>
+        <div><h4>Light</h4><p>A kagaribi, an iron fire basket on a tripod, lights the targets. It's warm against the red lake, and it explains where the light comes from.</p></div>
+      </div>
+    </div>
+
+    <div class="shot">
+      <div class="shot-head"><span class="num">05</span><span class="kanji">武</span><h3>Toolkit: his weapons</h3></div>
+      <div class="meta"><span>Toolkit</span><span>32mm</span><span>On the veranda · slow track along the stand</span></div>
+      <img class="frame" src="frames/b05.jpg" alt="Toolkit frame: a black lacquer stand with katana, wakizashi and tantō, a tall bow and a quiver leaning beside it, silhouetted against glowing paper doors">
+      <div class="notes">
+        <div><h4>Idea</h4><p>A samurai's tools are his weapons. Katana = Backend, wakizashi = Frontend, tantō = Database, yumi = DevOps &amp; cloud. Each one carries a group of real tools.</p></div>
+        <div><h4>Motion</h4><p>The camera tracks along the stand. The weapon in view lifts slightly and its group lights up in the list. The katana slides a hand's width out of its scabbard, and the blade catches the light.</p></div>
+        <div><h4>Look</h4><p>Black lacquer against glowing paper doors gives pure silhouettes, which are easy to read on a phone.</p></div>
+      </div>
+    </div>
+
+    <div class="shot">
+      <div class="shot-head"><span class="num">06</span><span class="kanji">連</span><h3>Contact: back to the shore</h3></div>
+      <div class="meta"><span>Contact → footer</span><span>30mm</span><span>Flies back across the lake and rises under the pine</span></div>
+      <img class="frame" src="frames/b06.jpg" alt="Contact frame: framed by the pine's branch, the whole lake: the stepping stones and lantern walkway, him on his stone, the house on the far shore, the blood moon">
+      <div class="notes">
+        <div><h4>Action</h4><p>The camera flies back over the water to the near shore and rises under the pine. Its branch frames the whole lake: the walkway, him on his stone, the far shore, the moon.</p></div>
+        <div><h4>Payoff</h4><p>Hovering the email brightens every lantern along the path, like lighting the way for a visitor.</p></div>
+        <div><h4>Footer</h4><p>"Back to top" drops the camera back down through the reeds to the opening frame.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <p class="label"><span class="k">型</span>Rules</p>
+    <table>
+      <tr><th>Topic</th><th>Rule</th></tr>
+      <tr><td>Samurai</td><td>One place (his stone) and one pose (idle breathing) for the whole film. No walking. Cloth springs still move his coat in the wind.</td></tr>
+      <tr><td>Lighting</td><td>Red moon key and rim, warm lanterns and fire. Every lamp is glowing material + glow sprite + light pool, identical on every device. Real point lights are a desktop-only extra, and their count never changes.</td></tr>
+      <tr><td>Parallax</td><td>Every shot has a foreground layer. The camera always moves a little sideways as well as forward, never straight on, so the layers separate. The pointer adds a little more.</td></tr>
+      <tr><td>Performance</td><td>One lake instead of four separate sets. Ridges are flat cut-outs, reeds are one instanced mesh per clump, and the water reflection is reused from v4 with the phone settings.</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <p class="label"><span class="k">問</span>Decisions for you</p>
+    <ol class="q">
+      <li><b>The opening iai.</b> One draw on the first scroll, as a silhouette against the moon, or no sword animation at all?</li>
+      <li><b>Where it lives.</b> Replace the current <code>/experimental</code> with v6, or build it alongside at <code>/experimental/v6</code>?</li>
+    </ol>
+  </section>
+
+  <p class="cap" style="margin-top:80px">侍 · biairmal storyboard v6 · real-time previz renders (design/previz/scene4.js) · placeholder geometry</p>
+</div>
+</body>
+</html>
