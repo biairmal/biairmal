@@ -12,8 +12,11 @@ import { BokehPass } from 'three/addons/postprocessing/BokehPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
-const W = 1600, H = 900;
-const shot = (location.hash || '#b01').slice(1);
+const RAW = (location.hash || '#b01').slice(1);
+const MOB = RAW.endsWith('m');                       // phone portrait: 390×844 rendered at 2×
+const shot = MOB ? RAW.slice(0, -1) : RAW;
+const W = MOB ? 780 : 1600, H = MOB ? 1688 : 900;
+if (MOB) { const st = document.getElementById('stage'); st.style.width = W + 'px'; st.style.height = H + 'px'; }
 const V = (x = 0, y = 0, z = 0) => new THREE.Vector3(x, y, z);
 let seed = 11; const rand = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
 
@@ -433,6 +436,59 @@ switch (shot) {
     const o = new THREE.OrthographicCamera(-46, 46, 25.9, -25.9, 0.1, 400); o.position.set(0, 120, -8); o.up.set(1, 0, 0); o.lookAt(0, 0, -8); window.__ortho = o;
     scene.fog = null; aperture = 0; break;
   }
+}
+
+// ---------------- phone portrait: own framing per shot, text above or below the subject
+const MNAV = `<div style="position:absolute;top:0;left:0;right:0;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 20px"><span style="display:flex;gap:9px;align-items:center"><span class="jp" style="font-size:18px;font-weight:600">侍</span><span style="opacity:.2">|</span><span class="mono" style="font-size:14px">biairmal<span style="display:inline-block;width:6px;height:14px;background:#ededed;margin-left:2px;vertical-align:-2px"></span></span></span><span style="display:flex;gap:18px;align-items:center;color:#bbb"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 3v1M12 20v1M3 12h1M20 12h1"/></svg><svg width="20" height="14" viewBox="0 0 20 14" stroke="currentColor" stroke-width="1.6"><path d="M0 1h20M6 7h14M0 13h20"/></svg></span></div>`;
+const lblM = (k, t) => `<div class="lbl" style="font-size:10px"><span class="k" style="font-size:14px">${k}</span>${t}</div>`;
+const scrimTop = `<div style="position:absolute;inset:0 0 auto 0;height:48%;background:linear-gradient(#000c,#0000)"></div>`;
+const scrimBot = `<div style="position:absolute;inset:auto 0 0 0;height:50%;background:linear-gradient(#0000,#000d)"></div>`;
+let uiM = '';
+if (MOB) {
+  focus = Math.min(focus, 40);
+  switch (shot) {
+    case 'b01': // him and the moon in the lower half; the headline in the sky above
+      setCam(V(-0.5, 0.85, 21.5), V(0.62, 3.25, 8), 24);
+      focus = 13.5;
+      uiM = scrimTop + MNAV + `<div style="position:absolute;left:20px;right:20px;top:92px">
+        <div class="lbl" style="font-size:10px"><span style="width:6px;height:6px;background:#c4453f"></span>Available for freelance work</div>
+        <div style="font-size:38px;font-weight:500;letter-spacing:-.045em;line-height:1.06;margin:16px 0 14px">Every line of code, a deliberate cut.</div>
+        <div class="muted" style="font-size:14px;line-height:1.55">I'm Bandana, a software engineer who owns the whole path — from the first plan to a stable release.</div></div>
+        <div class="mono" style="position:absolute;left:0;right:0;bottom:22px;text-align:center;font-size:9px;letter-spacing:.2em;color:#999">SCROLL</div>`;
+      break;
+    case 'b02': // a tall portrait: him full-height with his reflection; text at the bottom
+      setCam(V(1.0, 0.55, 12.9), HIS.clone().add(V(-0.12, 1.05, 0)), 22);
+      focus = cam.position.distanceTo(head);
+      uiM = scrimBot + MNAV + `<div style="position:absolute;left:20px;right:20px;bottom:40px">${lblM('人', 'About')}
+        <div style="font-size:30px;font-weight:500;letter-spacing:-.04em;line-height:1.1;margin:12px 0 12px">Backend by trade, full-stack when it counts.</div>
+        <div class="muted" style="font-size:14px;line-height:1.55">Software engineer in Jakarta, Indonesia, building digital products for 4+ years.</div></div>`;
+      break;
+    case 'b03': // the walkway's vanishing point centred; the stage card at the bottom
+      setCam(V(0.35, 1.45, 5.2), V(0.15, 1.9, -32), 20);
+      uiM = scrimTop + scrimBot + MNAV + `<div style="position:absolute;left:20px;right:20px;top:88px">${lblM('道', 'Approach')}<div style="font-size:28px;font-weight:500;letter-spacing:-.04em;line-height:1.1;margin-top:12px">One clean path from plan to production.</div></div>
+        <div style="position:absolute;left:20px;right:20px;bottom:40px"><div class="mono" style="font-size:10px;color:#c9a46a;letter-spacing:.12em">01 / 04</div><div style="font-size:22px;font-weight:500;margin:6px 0">Plan</div><div class="muted" style="font-size:13px;line-height:1.55">Requirements, architecture and risks mapped before any code.</div>
+        <div style="height:1px;background:#333;margin-top:16px"><div style="width:25%;height:1px;background:#ededed"></div></div></div>`;
+      break;
+    case 'b04': // targets in the middle band; list below
+      setCam(V(TARGETS.x - 1.2, 1.6, TARGETS.z + 7.6), V(TARGETS.x + 2.3, 1.05, TARGETS.z - 0.3), 20);
+      focus = 8;
+      uiM = scrimTop + scrimBot + MNAV + `<div style="position:absolute;left:20px;right:20px;top:88px">${lblM('戦', 'Recent work')}<div style="font-size:28px;font-weight:500;letter-spacing:-.04em;margin-top:12px">Shipped in production.</div></div>
+        <div style="position:absolute;left:20px;right:20px;bottom:34px">${['Mobile banking backend rewrite', 'Event-driven data sync', 'Standing order platform', 'Official travel order system'].map((t, i) => `<div style="display:flex;gap:14px;align-items:baseline;border-top:1px solid #2a2a2a;padding:12px 0;${i ? 'opacity:.55' : ''}"><span class="mono" style="font-size:11px;color:${i ? '#888' : '#c4453f'}">0${i + 1}</span><span style="font-size:${i ? 15 : 17}px;font-weight:500">${t}</span></div>`).join('')}</div>`;
+      break;
+    case 'b05': // the stand and the tall bow fill the portrait; groups as a 2×2 grid below
+      setCam(V(ARMS.x - 0.15, ARMS.y + 0.62, ARMS.z + 3.5), V(ARMS.x + 0.12, ARMS.y + 1.0, ARMS.z), 20);
+      focus = 3.6;
+      uiM = scrimTop + scrimBot + MNAV + `<div style="position:absolute;left:20px;right:20px;top:88px">${lblM('武', 'Toolkit')}<div style="font-size:28px;font-weight:500;letter-spacing:-.04em;margin-top:12px">Tools I trust in production.</div></div>
+        <div style="position:absolute;left:20px;right:20px;bottom:36px;display:grid;grid-template-columns:1fr 1fr;gap:16px 18px">${[['Backend', 'Katana', '.NET · Spring · Go · Node'], ['Frontend', 'Wakizashi', 'React · Next.js · Blazor'], ['Database', 'Tantō', 'PostgreSQL · Oracle · Redis'], ['DevOps', 'Yumi', 'Docker · CI/CD · Azure · AWS']].map(([g, w, t], i) => `<div style="${i ? 'opacity:.6' : ''}"><div class="mono" style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;border-top:1px solid ${i ? '#555' : '#ededed'};padding-top:8px">${g} <span style="color:#c4453f">· ${w}</span></div><div style="font-size:12px;margin-top:6px;color:#bbb">${t}</div></div>`).join('')}</div>`;
+      break;
+    case 'b06': // the pine across the top, the lake and the moon in the middle, contact below
+      setCam(V(-1.0, 3.6, 33), V(1.0, 3.2, -25), 18);
+      uiM = scrimBot + MNAV + `<div style="position:absolute;left:20px;right:20px;bottom:44px">${lblM('連', 'Contact')}
+        <div style="font-size:38px;font-weight:500;letter-spacing:-.05em;line-height:1.02;margin:12px 0 18px">Have something that needs to ship?</div>
+        <div style="font-size:19px;font-weight:500;display:inline-block;border-bottom:1px solid #555;padding-bottom:5px">bandanairmal@gmail.com ↗</div></div>`;
+      break;
+  }
+  ui = `<div style="position:absolute;left:0;top:0;width:390px;height:844px;transform:scale(2);transform-origin:0 0">${uiM}</div>`;
 }
 
 // ---------------- post
