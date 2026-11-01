@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>biairmal · Storyboard v5 · The House on the Water</title>
+<style>
+  :root { --bg: #0a0a0a; --fg: #ededed; --muted: #a0a0a0; --faint: #6e6e6e; --line: rgba(237,237,237,.12); --blood: #c4453f; --warm: #d9a868;
+    --mono: "Geist Mono", ui-monospace, Menlo, Consolas, monospace; --sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; --jp: "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", serif; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.6 var(--sans); }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 56px 28px 120px; }
+  .label { font: 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--faint); display: flex; gap: 10px; align-items: center; margin: 0 0 18px; }
+  .label .k { font: 16px/1 var(--jp); color: var(--fg); letter-spacing: 0; }
+  .dot { width: 6px; height: 6px; background: var(--blood); display: inline-block; }
+  h1 { font-size: clamp(38px, 6.4vw, 80px); line-height: 1.02; letter-spacing: -.05em; font-weight: 500; margin: 18px 0 22px; }
+  h2 { font-size: clamp(26px, 3.4vw, 42px); letter-spacing: -.035em; font-weight: 500; margin: 0 0 14px; line-height: 1.1; }
+  h3 { font-size: 24px; letter-spacing: -.02em; font-weight: 500; margin: 0; }
+  p { margin: 0 0 12px; }
+  .muted { color: var(--muted); }
+  .lede { max-width: 780px; color: var(--muted); font-size: 18px; line-height: 1.65; }
+  section { margin-top: 110px; }
+  img.frame, img.hero { display: block; width: 100%; border: 1px solid var(--line); background: #000; }
+  img.hero { margin-top: 44px; }
+  .cap { font: 11px/1.5 var(--mono); color: var(--faint); letter-spacing: .06em; margin-top: 10px; text-transform: uppercase; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+  .grid3 > div { background: var(--bg); padding: 22px; }
+  .grid3 b { display: block; font-weight: 500; margin-bottom: 8px; }
+  .grid3 span { color: var(--muted); font-size: 14px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 12px 18px 12px 0; border-top: 1px solid var(--line); vertical-align: top; }
+  th { font: 10px/1.6 var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--faint); font-weight: 400; }
+  td { color: #d0d0d0; }
+  td:first-child { white-space: nowrap; color: var(--fg); }
+  .shot { padding: 56px 0; border-top: 1px solid var(--line); }
+  .shot-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 6px; flex-wrap: wrap; }
+  .num { font: 12px/1 var(--mono); color: var(--faint); }
+  .kanji { font: 26px/1 var(--jp); }
+  .meta { font: 11px/1.5 var(--mono); color: var(--faint); letter-spacing: .06em; text-transform: uppercase; margin: 8px 0 22px; }
+  .meta span { margin-right: 18px; }
+  .notes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 26px; }
+  .notes h4 { font: 10px/1 var(--mono); text-transform: uppercase; letter-spacing: .1em; color: var(--faint); font-weight: 400; margin: 0 0 10px; padding-top: 12px; border-top: 1px solid var(--line); }
+  .notes p { font-size: 14px; color: #cfcfcf; line-height: 1.6; }
+  .tag { display: inline-block; font: 10px/1 var(--mono); padding: 4px 6px; border: 1px solid var(--line); color: var(--muted); letter-spacing: .06em; text-transform: uppercase; vertical-align: 3px; }
+  .tag.w { border-color: rgba(217,168,104,.5); color: var(--warm); }
+  .chain { display: flex; flex-wrap: wrap; gap: 0; margin-top: 26px; border: 1px solid var(--line); }
+  .chain div { flex: 1 1 140px; padding: 16px 14px; border-right: 1px solid var(--line); position: relative; }
+  .chain div:last-child { border-right: 0; }
+  .chain b { display: block; font: 15px/1.3 var(--jp); font-weight: 400; margin-bottom: 6px; }
+  .chain small { display: block; font: 11px/1.45 var(--mono); color: var(--faint); }
+  .chain i { font-style: normal; color: var(--warm); }
+  ol.q { padding-left: 20px; } ol.q li { margin-bottom: 12px; color: #cfcfcf; } ol.q b { color: var(--fg); font-weight: 500; }
+  @media (max-width: 900px) { .grid3, .notes { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <p class="label"><span class="dot"></span>Design phase · alternative storyboard · v5</p>
+  <h1>The House on the Water.</h1>
+  <p class="lede">This is an alternative to v4. Instead of separate sets floating in the dark, the whole site is <b>one place you travel into</b>: a gate on the shore, a causeway of lanterns, and a house standing on a lake. Inside is the person, his swords, and the bench they were sharpened on. Every section is a step further in, and each thing has a reason to be where it is. The samurai stands still the whole time. The camera and the world do the moving.</p>
+  <img class="hero" src="frames/v01.jpg" alt="Establishing shot: a shrine gate on the left, a causeway lined with glowing stone lanterns leading to a house standing on a lake, the full moon behind its roof, the hero text on the left">
+  <p class="cap">Shot 01 · real-time previz render · placeholder geometry, the ronin from v3</p>
+
+  <section>
+    <p class="label"><span class="k">改</span>What this fixes</p>
+    <div class="grid3">
+      <div><b>A world that makes sense</b><span>In v4 the sword rack, lanterns and tsuba ring were separate props floating in the dark. Here every object belongs to one place and does a job there. The lanterns light the way to the house, the swords rest in its alcove, and the whetstones sit on the bench where those swords were finished.</span></div>
+      <div><b>He doesn't walk</b><span>The samurai stands on one spot in the hall for the whole film, and he never walks. His one big action, the draw, is seen as a <em>shadow on the paper door</em>. A shadow is forgiving and very cinematic, so the animation doesn't need to be perfect.</span></div>
+      <div><b>Light that's always on</b><span>Every lamp is lit from the first frame, on every device. The light comes from glowing materials, glow sprites and painted pools of light on the planks and water. Real lights are only an extra on desktop. Phones no longer wait to get close before a lamp turns on.</span></div>
+    </div>
+  </section>
+
+  <section>
+    <p class="label"><span class="k">地</span>The world</p>
+    <h2>One place, and one unbroken camera path.</h2>
+    <p class="muted" style="max-width:780px">The camera never cuts. It travels forward through the gate, along the causeway, through the door, around him, and up out of the house. The red dashed line is the path, and each circle is a shot where it pauses.</p>
+    <img class="frame" src="frames/map.jpg" alt="Top view: the gate on the right, the causeway with four lanterns leading left to a square house; inside, the samurai at the centre, the sword rack at the bottom left, the bench at the top; the camera path drawn through them in red">
+    <div class="chain">
+      <div><b>門 Gate</b><small>you arrive · <i>Hero</i></small></div>
+      <div><b>道 Causeway</b><small>4 lanterns · <i>Approach</i></small></div>
+      <div><b>障子 Door</b><small>the cut opens it</small></div>
+      <div><b>人 Him</b><small>the person · <i>About</i></small></div>
+      <div><b>戦 Alcove</b><small>his swords · <i>Work</i></small></div>
+      <div><b>武 Bench</b><small>his tools · <i>Toolkit</i></small></div>
+      <div><b>連 The lake</b><small>everything at once · <i>Contact</i></small></div>
+    </div>
+    <p class="muted" style="margin-top:18px;max-width:780px">The site's sections are reordered to follow the journey: Hero → Approach → About → Work → Toolkit → Contact. Approach now comes before About because it is literally the path you walk to reach him.</p>
+  </section>
+
+  <section>
+    <p class="label"><span class="k">絵</span>Shots</p>
+    <h2>Key frames</h2>
+
+    <div class="shot">
+      <div class="shot-head"><span class="num">00</span><span class="kanji">灯</span><h3>Prologue: lighting the path</h3><span class="tag">on load</span></div>
+      <div class="meta"><span>0 – 1.6s</span><span>55mm</span><span>Static · slow focus pull</span></div>
+      <img class="frame" src="frames/v00.jpg" alt="Close on one stone lantern glowing at night, the other lanterns and the house blurred behind; a samurai's shadow already visible on the paper wall">
+      <div class="notes">
+        <div><h4>Action</h4><p>Black screen. One lantern flame catches, and the counter reads <code>064 / 100 · lighting the path</code>. As it loads, the other three lanterns light one by one down the causeway.</p></div>
+        <div><h4>Detail</h4><p>His shadow is already there on the far paper wall, small and soft. The first frame of the site tells you someone is waiting inside.</p></div>
+        <div><h4>Out</h4><p>At 100, focus racks from the lantern to the house and the camera pulls back into shot 01. No cut.</p></div>
+      </div>
+    </div>
+
+    <div class="shot">
+      <div class="shot-head"><span class="num">01</span><span class="kanji">門</span><h3>The gate: the whole world in one frame</h3></div>
+      <div class="meta"><span>Hero</span><span>30mm</span><span>Low, at the shore · slow push toward the gate</span></div>
+      <img class="frame" src="frames/v01.jpg" alt="The gate in the foreground, the lantern causeway, the house with lit paper walls, the moon behind it, all reflected in the lake">
+      <div class="notes">
+        <div><h4>Frame</h4><p>The gate frames the view. The causeway and its four lanterns lead to the house, with the moon behind its roof and everything doubled in the still lake. You can see where you're going before you start.</p></div>
+        <div><h4>Motion</h4><p>Mist drifts across the water, lantern flames flicker gently, and the camera leans a few degrees toward your cursor. Nothing else moves, so the stillness is the point.</p></div>
+        <div><h4>Scroll</h4><p>The first scroll pushes the camera through the gate. The gate passes overhead, a moment of framing that says "you've entered".</p></div>
+      </div>
+    </div>
+
+    <div class="shot">
+      <div class="shot-head"><span class="num">02</span><span class="kanji">道</span><h3>The causeway: four lanterns, four stages</h3><span class="tag w">pinned</span></div>
+      <div class="meta"><span>Approach</span><span>32mm</span><span>Dolly along the causeway, eye height · ~25m</span></div>
+      <img class="frame" src="frames/v02.jpg" alt="Walking the causeway at eye height: stone lanterns on alternating sides, the house ahead with lit paper walls and the samurai's shadow, the moon above the roof">
+      <div class="notes">
+        <div><h4>Idea</h4><p>The causeway is the "one clean path from plan to production". Its four lanterns are Plan, Build, Ship and Sustain, standing on alternate sides. You pass each one as you scroll, and its card rises beside it.</p></div>
+        <div><h4>Motion</h4><p>As the camera passes a lantern, it brightens slightly and its warm pool spreads across the planks, a small "you are here". A hairline along the bottom fills with a <code>01 / 04</code> counter.</p></div>
+        <div><h4>Ahead</h4><p>The house gets closer the whole way, and his shadow on the paper gets bigger. The section is a slow approach toward a person.</p></div>
+      </div>
+    </div>
+
+    <div class="shot">
+      <div class="shot-head"><span class="num">03</span><span class="kanji">影</span><h3>The threshold: his shadow draws</h3><span class="tag w">signature</span></div>
+      <div class="meta"><span>Between Approach and About</span><span>32mm</span><span>On the veranda · holds, then creeps forward</span></div>
+      <img class="frame" src="frames/v03.jpg" alt="The front paper wall seen from the veranda; the samurai's huge shadow cast on it by a lamp inside, his hand on the hilt">
+      <div class="notes">
+        <div><h4>Action</h4><p>The camera stops at the door. On the paper, his shadow grows huge: a lamp behind him throws it onto the doors. Your scroll scrubs the draw. You see the hand go to the hilt, the step, and the blade sliding out, all in shadow.</p></div>
+        <div><h4>Why shadow</h4><p>A silhouette hides everything that's hard to animate (cloth, fingers, faces) and keeps only the shape of the motion. It's also a classic image of Japanese theatre and cinema.</p></div>
+        <div><h4>Built with</h4><p>A real spotlight behind him casts his real shadow onto a layer on the door. It moves exactly with the animation, so nothing is faked.</p></div>
+      </div>
+    </div>
+
+    <div class="shot">
+      <div class="shot-head"><span class="num">04</span><span class="kanji">斬</span><h3>The cut opens the door</h3></div>
+      <div class="meta"><span>Same scroll</span><span>36 → 28mm</span><span>Push through the slit, 4° roll</span></div>
+      <img class="frame" src="frames/v04.jpg" alt="The shadow completes a rising cut; a bright diagonal slash glows across the paper and the two door panels begin to part, warm light spilling out">
+      <div class="notes">
+        <div><h4>Action</h4><p>The shadow's rising cut ends in a slash of light across the paper. The slit glows, then the two door panels slide apart and warm light spills out over the veranda.</p></div>
+        <div><h4>Replaces</h4><p>In v4 the whole <em>screen</em> was sliced. Here a real object in the world is cut, and the cut <em>opens</em> something. That's the story beat: the cut is how you get in.</p></div>
+        <div><h4>Camera</h4><p>The camera pushes through the opening as it widens, with a slight roll. No cut, no fade.</p></div>
+      </div>
+    </div>
+
+    <div class="shot">
+      <div class="shot-head"><span class="num">05</span><span class="kanji">人</span><h3>About: the person</h3></div>
+      <div class="meta"><span>About</span><span>40mm</span><span>Slow arc around him, ~25°</span></div>
+      <img class="frame" src="frames/v05.jpg" alt="Inside the hall: the samurai stands in the middle in his kasa and menpō, lamps in the corners, glowing paper walls, the About copy on the left">
+      <div class="notes">
+        <div><h4>Frame</h4><p>Inside, in warm lamplight. He stands in the middle of the hall facing the door you came through. The camera circles him slowly while you read.</p></div>
+        <div><h4>Motion</h4><p>Only idle breathing and cloth. His kasa catches the lamp. The quietest shot of the film.</p></div>
+        <div><h4>Detail</h4><p>The next two shots, the alcove and the bench, are both a few steps from where he stands.</p></div>
+      </div>
+    </div>
+
+    <div class="shot">
+      <div class="shot-head"><span class="num">06</span><span class="kanji">戦</span><h3>Work: the swords in the alcove</h3></div>
+      <div class="meta"><span>Work</span><span>34mm</span><span>Past his shoulder → into the alcove</span></div>
+      <img class="frame" src="frames/v06.jpg" alt="The tokonoma alcove: a black lacquered sword rack holding four swords, a hanging scroll with one brushstroke above, a lamp beside it, the Work list on the left">
+      <div class="notes">
+        <div><h4>Idea</h4><p>Four projects, four swords, resting in the place of honour: the tokonoma alcove, under a scroll with a single brushstroke. Each one is finished work.</p></div>
+        <div><h4>Interaction</h4><p>Opening a row in the list draws its sword a hand's width from its scabbard, with a glint along the edge, and turns its scabbard ring red. The camera eases toward that sword.</p></div>
+        <div><h4>Connection</h4><p>The camera leaves past his shoulder, so you always know where you are: still in his house, a few steps from him.</p></div>
+      </div>
+    </div>
+
+    <div class="shot">
+      <div class="shot-head"><span class="num">07</span><span class="kanji">武</span><h3>Toolkit: the polishing bench</h3></div>
+      <div class="meta"><span>Toolkit</span><span>34mm</span><span>Slow track along the bench, coarse → fine</span></div>
+      <img class="frame" src="frames/v07.jpg" alt="A low wooden bench with four whetstones in a row from dark to pale, a blade lying across the last one, a paper lamp beside it, the tool groups listed below">
+      <div class="notes">
+        <div><h4>Idea</h4><p>A sword is only as good as its tools. The bench holds four whetstones, coarse to fine, one per group: Backend, Frontend, Database, DevOps. A blade lies across the finest stone. These are the tools behind the swords you just saw.</p></div>
+        <div><h4>Motion</h4><p>The camera tracks along the bench as you scroll. The stone in view gets a wet sheen and its group lights up in the list. A drop of water runs along the blade.</p></div>
+        <div><h4>Replaces</h4><p>The orbiting tsuba ring from v4, which didn't belong to anything. A bench of stones is real and means something.</p></div>
+      </div>
+    </div>
+
+    <div class="shot">
+      <div class="shot-head"><span class="num">08</span><span class="kanji">連</span><h3>Contact: everything at once</h3></div>
+      <div class="meta"><span>Contact → footer</span><span>30mm</span><span>Up through the roof · long crane back to the shore</span></div>
+      <img class="frame" src="frames/v08.jpg" alt="High wide view from above the shore: the gate, the causeway and its lanterns, the house glowing on the lake in mist, the moon above, the Contact headline on the left">
+      <div class="notes">
+        <div><h4>Action</h4><p>The camera rises up out of the house and pulls back over the lake until the whole world is in frame: the house glowing on the water, the lantern path, the gate and the moon. It's the same world you entered, now seen whole.</p></div>
+        <div><h4>Payoff</h4><p>Hovering the email brightens the whole causeway, every lantern, like a path being lit for a visitor. It invites them to walk the same path you just did.</p></div>
+        <div><h4>Footer</h4><p>"Back to top" flies the camera back down the causeway to the gate, at 4× speed.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <p class="label"><span class="k">型</span>Rules for this version</p>
+    <table>
+      <tr><th>Topic</th><th>Rule</th></tr>
+      <tr><td>Samurai</td><td>He is at one spot in the hall for the whole film. He never walks. The animation used is idle breathing and the iai, which is only ever seen as a shadow on the paper. Polishing animation is optional: the shadow play hides its flaws.</td></tr>
+      <tr><td>Camera</td><td>One continuous path, no cuts. Each section is a pause on the path, and scrolling between sections is travel. Hand-placed curves (Catmull-Rom) through the shots, so the path never clips through walls.</td></tr>
+      <tr><td>Lighting</td><td>Two colours only: cool moonlight outside and warm lamplight inside, with paper walls between them. Every lamp is an emissive object plus a glow sprite and a light pool on the surfaces below, identical on all devices. Real point lights are a desktop extra and never switch on or off.</td></tr>
+      <tr><td>Moving parts</td><td>Sliding doors, flickering flames, drifting mist, water and dust. These are cheap, robust and everywhere, so the world feels alive while the character stays still.</td></tr>
+      <tr><td>Performance</td><td>One house, one causeway, one gate: far less geometry than v4's four separate sets. The interior and exterior are visibility-culled based on which side of the door the camera is on. The phone settings from the last pass still apply.</td></tr>
+      <tr><td>Moon</td><td>Kept, but it never changes phase and there's no eclipse. It's the backlight for the house and the lake.</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <p class="label"><span class="k">問</span>Decisions for you</p>
+    <ol class="q">
+      <li><b>Section order.</b> The journey works best as Hero → Approach → About → Work → Toolkit → Contact. Is moving Approach before About OK?</li>
+      <li><b>Blood moon.</b> v5 drops the eclipse and red grade. Should a red accent come back anywhere? The proposal is the sword ring in Work and the hover on Contact.</li>
+      <li><b>Where it lives.</b> Replace the current <code>/experimental</code> with v5, or keep v4 there and build v5 at <code>/experimental/v5</code> so you can compare them on your phone?</li>
+    </ol>
+  </section>
+
+  <p class="cap" style="margin-top:80px">侍 · biairmal storyboard v5 · real-time previz renders (design/previz/scene3.js) · placeholder geometry</p>
+</div>
+</body>
+</html>
