@@ -2,7 +2,7 @@
 
 Prompts and specs for every asset the `/experimental` v6 scene needs. Generate them with your tool of choice, export with the specs in section 1, and drop the files into the paths in section 6. The engine already handles lighting, water, mist, dust, fog and glow, so **don't bake lighting, a red tint or the moon into any asset**.
 
-Reference frames: `design/storyboard-v6/frames/` (b01–b06, map). Attach them as image references wherever your tool allows.
+Reference frames: `design/storyboard-v7/frames/` (c01–c06, map; the current layout) and `design/storyboard-v6/frames/`. Attach them as image references wherever your tool allows.
 
 ---
 
@@ -60,7 +60,7 @@ Reference frames: `design/storyboard-v6/frames/` (b01–b06, map). Attach them a
 - Skin weights clean at the shoulders, hips and knees, with the cloth weighted to the chains.
 - **Animations** (30 fps, in place, no root motion):
   - `idle` (required): a 4–6 s loop. Calm breathing, a subtle weight shift, the left hand resting on the scabbard by the tsuba.
-  - `iai` (optional): ~6 s. The thumb breaks the scabbard seal, a step forward as he draws, a **rising diagonal cut from the left hip to above the right shoulder**, a hold, a blade flick, then a slow re-sheathe. Mocap preferred.
+  - `iai` (required): ~6 s. The thumb breaks the scabbard seal, a step forward as he draws, a **rising diagonal cut from the left hip to above the right shoulder**, a hold, a blade flick, then a slow re-sheathe. Mocap preferred.
 
 **Materials** (names): `cloth_vest`, `cloth_kimono`, `cloth_under`, `cloth_trousers`, `cloth_wraps`, `cloth_obi`, `rope`, `bead_dark`, `bead_light`, `kasa_lacquer`, `lacquer_black`, `lacquer_red` (mask interior), `horsehair`, `silk`, `ito_wrap`, `iron`, `blade_steel`, `seam_light`.
 
@@ -145,9 +145,9 @@ Leave the flames out. The engine adds the fire. Add a node named `fire_anchor` a
 ### 3.10 Pine tree: `pine.glb`
 **Budget:** 15k / 4k · 2048 px (bark) + 1024 px (needle cards)
 
-> A windswept Japanese black pine (kuromatsu) growing on a lakeshore, 7.5 m tall. A thick, twisted, leaning trunk with deeply fissured dark bark. One long horizontal branch reaching out over the water. Foliage pruned into flat, layered cloud-pads (niwaki style), made of alpha-clipped needle cards.
+> A windswept Japanese black pine (kuromatsu) growing on a lakeshore, 8–16 m tall. A thick, twisted, leaning trunk with deeply fissured dark bark. Foliage pruned into flat, layered cloud-pads (niwaki style), made of alpha-clipped needle cards.
 
-The long branch must extend about **8 m sideways** from the trunk, toward +X. It frames the top of the hero and contact shots.
+Make 3–4 variants with different heights and leans (pine_0 … pine_3). They stand in a line on the far shore, silhouetted against the blood moon in the Contact shot, so the outline matters most.
 
 ### 3.11 Reed clumps: `reeds.glb` (3 variants)
 **Budget:** 1.5k each / 500 · 1024 px (alpha-clipped cards)
@@ -218,7 +218,7 @@ public/experimental/v6/
   weapons.glb            weapons-mobile.glb
   targets.glb
   brazier.glb
-  pine.glb               pine-mobile.glb
+  pine.glb (3–4 variants)  pine-mobile.glb
   reeds.glb
   ridge_near.png  ridge_mid.png  ridge_far.png
   moon_albedo.jpg
@@ -232,6 +232,6 @@ public/experimental/v6/
 - [ ] Every model is a real-world size in metres, Y-up, faces +Z, with its pivot at the base.
 - [ ] The material and object names match this document (the engine looks them up by name).
 - [ ] No baked lighting, red tint or moon colour in any texture.
-- [ ] The ronin: the `idle` clip loops cleanly, `katana_blade` exists inside the scabbard, and the cloth chain bones are present.
+- [ ] The ronin: the `idle` clip loops cleanly, the `iai` clip is included, `katana_blade` exists inside the scabbard, and the cloth chain bones are present.
 - [ ] The `-mobile` versions exist for ronin, lantern, house, weapons and pine.
 - [ ] The walkway segment tiles seamlessly along Z.

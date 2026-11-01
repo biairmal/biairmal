@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>biairmal · Storyboard v7 · Facing the Moon</title>
+<style>
+  :root { --bg: #0a0a0a; --fg: #ededed; --muted: #a0a0a0; --faint: #6e6e6e; --line: rgba(237,237,237,.12); --blood: #c4453f; --warm: #e0826e;
+    --mono: "Geist Mono", ui-monospace, Menlo, Consolas, monospace; --sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; --jp: "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", serif; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.6 var(--sans); }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 56px 28px 120px; }
+  .label { font: 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--faint); display: flex; gap: 10px; align-items: center; margin: 0 0 18px; }
+  .label .k { font: 16px/1 var(--jp); color: var(--fg); letter-spacing: 0; }
+  .dot { width: 6px; height: 6px; background: var(--blood); display: inline-block; }
+  h1 { font-size: clamp(38px, 6.4vw, 80px); line-height: 1.02; letter-spacing: -.05em; font-weight: 500; margin: 18px 0 22px; }
+  h2 { font-size: clamp(26px, 3.4vw, 42px); letter-spacing: -.035em; font-weight: 500; margin: 0 0 14px; line-height: 1.1; }
+  h3 { font-size: 24px; letter-spacing: -.02em; font-weight: 500; margin: 0; }
+  p { margin: 0 0 12px; }
+  .muted { color: var(--muted); }
+  .lede { max-width: 780px; color: var(--muted); font-size: 18px; line-height: 1.65; }
+  section { margin-top: 110px; }
+  img.frame, img.hero { display: block; width: 100%; border: 1px solid var(--line); background: #000; }
+  img.hero { margin-top: 44px; }
+  .cap { font: 11px/1.5 var(--mono); color: var(--faint); letter-spacing: .06em; margin-top: 10px; text-transform: uppercase; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+  .grid3 > div { background: var(--bg); padding: 22px; }
+  .grid3 b { display: block; font-weight: 500; margin-bottom: 8px; }
+  .grid3 span { color: var(--muted); font-size: 14px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 12px 18px 12px 0; border-top: 1px solid var(--line); vertical-align: top; }
+  th { font: 10px/1.6 var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--faint); font-weight: 400; }
+  td { color: #d0d0d0; }
+  td:first-child { white-space: nowrap; color: var(--fg); }
+  .shot { padding: 56px 0; border-top: 1px solid var(--line); }
+  .shot-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 6px; flex-wrap: wrap; }
+  .num { font: 12px/1 var(--mono); color: var(--faint); }
+  .kanji { font: 26px/1 var(--jp); }
+  .meta { font: 11px/1.5 var(--mono); color: var(--faint); letter-spacing: .06em; text-transform: uppercase; margin: 8px 0 22px; }
+  .meta span { margin-right: 18px; }
+  .notes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 26px; }
+  .notes h4 { font: 10px/1 var(--mono); text-transform: uppercase; letter-spacing: .1em; color: var(--faint); font-weight: 400; margin: 0 0 10px; padding-top: 12px; border-top: 1px solid var(--line); }
+  .notes p { font-size: 14px; color: #cfcfcf; line-height: 1.6; }
+  .tag { display: inline-block; font: 10px/1 var(--mono); padding: 4px 6px; border: 1px solid var(--line); color: var(--muted); letter-spacing: .06em; text-transform: uppercase; vertical-align: 3px; }
+  .tag.w { border-color: rgba(217,168,104,.5); color: var(--warm); }
+  .chain { display: flex; flex-wrap: wrap; gap: 0; margin-top: 26px; border: 1px solid var(--line); }
+  .chain div { flex: 1 1 140px; padding: 16px 14px; border-right: 1px solid var(--line); position: relative; }
+  .chain div:last-child { border-right: 0; }
+  .chain b { display: block; font: 15px/1.3 var(--jp); font-weight: 400; margin-bottom: 6px; }
+  .chain small { display: block; font: 11px/1.45 var(--mono); color: var(--faint); }
+  .chain i { font-style: normal; color: var(--warm); }
+  ol.q { padding-left: 20px; } ol.q li { margin-bottom: 12px; color: #cfcfcf; } ol.q b { color: var(--fg); font-weight: 500; }
+  @media (max-width: 900px) { .grid3, .notes { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <p class="label"><span class="dot"></span>Design phase · storyboard v7 · revised from your notes on v6</p>
+  <h1>Facing the Moon.</h1>
+  <p class="lede">One line runs through the world: <b>the blood moon → the far shore and its pines → the lake → him, on his stone, facing the moon → the lantern path → the house</b>. The film opens quietly, close on him with the moon behind the camera. It circles him through the draw, follows the path to the house, and only at the end turns around: behind him, across the water, the pines and the blood moon.</p>
+  <img class="hero" src="frames/c06.jpg" alt="Contact: the samurai seen from behind on his stone, across the lake a line of pines and the huge blood moon">
+  <p class="cap">Shot 06 · the climax · real-time previz render · placeholder geometry</p>
+
+  <section>
+    <p class="label"><span class="k">改</span>Your notes → what changed</p>
+    <table>
+      <tr><th>You said</th><th>v7</th></tr>
+      <tr><td>Moon in front of the samurai</td><td>The order is moon → him → house, with him in the middle on his stone, facing the moon. The lantern path runs behind him to the house on the near shore.</td></tr>
+      <tr><td>Hero not too flashy</td><td>A close-up of him, his hand on the hilt and the scabbard seal just broken: the moment before the draw. The moon is behind the camera, so there’s no red disc and little glow. Low key, warm lantern light behind him.</td></tr>
+      <tr><td>Circle him; see the slash</td><td>Scrolling circles the camera from his front-left to his front-right as he draws. The cut leaves a ribbon of light that follows the <em>real</em> path of the blade from the animation, from his left hip to above his right shoulder.</td></tr>
+      <tr><td>Then along the path to the house</td><td>The camera glides past him onto the lantern path (Approach) and arrives at the house: the cut targets in the yard (Work), the weapons on the veranda (Toolkit).</td></tr>
+      <tr><td>Blood moon at Contact, as the climax</td><td>The first time the moon appears. The camera flies back down the path and stops behind him. His back, the water, the line of pines across the lake, and the blood moon filling the sky.</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <p class="label"><span class="k">地</span>The world</p>
+    <h2>Moon ← him → house.</h2>
+    <img class="frame" src="frames/map.jpg" alt="Top view: the blood moon and the far shore’s pines at left, him in the middle of the lake, the lantern path running right to the house with the targets and weapons; the camera path drawn in red">
+    <div class="chain">
+      <div><b>構 Him, close</b><small>hand on the hilt · <i>Hero</i></small></div>
+      <div><b>斬 The circle</b><small>the draw and the slash · <i>About</i></small></div>
+      <div><b>道 The path</b><small>4 lanterns to the house · <i>Approach</i></small></div>
+      <div><b>戦 The yard</b><small>4 cut targets · <i>Work</i></small></div>
+      <div><b>武 The veranda</b><small>4 weapons · <i>Toolkit</i></small></div>
+      <div><b>月 Behind him</b><small>the blood moon · <i>Contact</i></small></div>
+    </div>
+    <p class="muted" style="margin-top:18px;max-width:780px">For the first five shots the camera faces away from the moon, toward the house. It turns around for the last one, so the moon works as a reveal.</p>
+  </section>
+
+  <section>
+    <p class="label"><span class="k">絵</span>Shots</p>
+    <h2>Key frames</h2>
+    
+    <div class="shot">
+      <div class="shot-head"><span class="num">01</span><span class="kanji">構</span><h3>Hero: the moment before</h3></div>
+      <div class="meta"><span>Hero</span><span>45mm</span><span>Close · slow drift</span></div>
+      <img class="frame" src="frames/c01.jpg" alt="Close-up of the samurai from the front, hand at the hilt, a stone lantern and the house glowing behind him">
+      <div class="notes"><div><h4>Frame</h4><p>Close on him from the front, his right hand on the hilt and his left thumb breaking the seal. Behind him the lantern path and the house glow warm and soft. The moon is behind the camera: no disc, just a faint red cast on his front.</p></div><div><h4>Motion</h4><p>Almost none. He breathes, the cloth stirs, the mist drifts. The camera drifts a few centimetres with the pointer.</p></div><div><h4>Scroll</h4><p>The first scroll starts the circle, and the draw begins. Nothing happens until you ask for it.</p></div></div>
+    </div>
+    <div class="shot">
+      <div class="shot-head"><span class="num">02</span><span class="kanji">斬</span><h3>About: the circle and the cut</h3> <span class="tag w">signature</span></div>
+      <div class="meta"><span>About</span><span>34mm</span><span>Arc from his front-left to front-right, ~70°</span></div>
+      <img class="frame" src="frames/c02.jpg" alt="The samurai mid-cut, seen from his front-right, a crescent of light trailing from his left hip to above his right shoulder">
+      <div class="notes"><div><h4>Action</h4><p>The camera circles him while your scroll scrubs the draw. At the cut, the blade leaves a crescent of light along its true path, and time slows. The trail fades from its tail as he holds the finish.</p></div><div><h4>Built from</h4><p>The ribbon is swept by the sword bone in the animation, so it always matches the motion. Red at the edges, white at the edge of the blade. It is additive, so it costs almost nothing.</p></div><div><h4>About</h4><p>The About copy sits beside the person it describes, at his defining moment.</p></div></div>
+    </div>
+    <div class="shot">
+      <div class="shot-head"><span class="num">03</span><span class="kanji">道</span><h3>Approach: the path to the house</h3> <span class="tag w">pinned</span></div>
+      <div class="meta"><span>Approach</span><span>30mm</span><span>Glides past him onto the path · dolly to the house</span></div>
+      <img class="frame" src="frames/c03.jpg" alt="Down the plank path lined with stone lanterns toward the house on the shore">
+      <div class="notes"><div><h4>Idea</h4><p>The four lanterns are Plan, Build, Ship, Sustain. The path pins and the camera walks it, and each lantern’s card rises as it passes.</p></div><div><h4>Parallax</h4><p>The near lantern sweeps past the lens while the house slowly grows.</p></div><div><h4>Light</h4><p>All lanterns are lit from the start: glowing material, glow sprite and light pools.</p></div></div>
+    </div>
+    <div class="shot">
+      <div class="shot-head"><span class="num">04</span><span class="kanji">戦</span><h3>Work: the yard</h3></div>
+      <div class="meta"><span>Work</span><span>34mm</span><span>Track along the targets</span></div>
+      <img class="frame" src="frames/c04.jpg" alt="Four straw targets in the yard, each cut through on the diagonal, lit by a fire basket">
+      <div class="notes"><div><h4>Idea</h4><p>Four straw targets, each cut clean through in one stroke: one per shipped project. These are the cuts from his practice, next to his house.</p></div><div><h4>Interaction</h4><p>Opening a project row brings its target forward, and the cut face glows briefly.</p></div><div><h4>Light</h4><p>The fire basket lights the yard and explains where the light comes from.</p></div></div>
+    </div>
+    <div class="shot">
+      <div class="shot-head"><span class="num">05</span><span class="kanji">武</span><h3>Toolkit: the veranda</h3></div>
+      <div class="meta"><span>Toolkit</span><span>32mm</span><span>Track along the stand</span></div>
+      <img class="frame" src="frames/c05.jpg" alt="The weapon stand and bow silhouetted against the glowing paper doors of the house">
+      <div class="notes"><div><h4>Idea</h4><p>Katana = Backend, wakizashi = Frontend, tantō = Database, yumi = DevOps &amp; cloud.</p></div><div><h4>Motion</h4><p>The weapon in view lifts slightly and the katana slides a hand’s width out of its scabbard.</p></div><div><h4>Look</h4><p>Black lacquer against glowing paper: pure silhouettes, easy to read on a phone.</p></div></div>
+    </div>
+    <div class="shot">
+      <div class="shot-head"><span class="num">06</span><span class="kanji">月</span><h3>Contact: the blood moon</h3> <span class="tag w">climax</span></div>
+      <div class="meta"><span>Contact → footer</span><span>55mm</span><span>Flies back down the path, stops behind him</span></div>
+      <img class="frame" src="frames/c06.jpg" alt="The samurai from behind on his stone, the pines and the blood moon across the lake">
+      <div class="notes"><div><h4>Climax</h4><p>The camera flies back along the path and settles behind him, then turns toward the moon. His silhouette, the water, the black pines across the lake and the blood moon, seen for the first time and filling the frame.</p></div><div><h4>Grade</h4><p>The scene shifts from warm lantern-light to red. The moon’s reflection runs across the water toward him.</p></div><div><h4>Payoff</h4><p>Hovering the email brightens every lantern on the path behind you. “Back to top” circles back to the opening close-up.</p></div></div>
+    </div>
+  </section>
+
+  <section>
+    <p class="label"><span class="k">携</span>On phones</p>
+    <h2>The same film, framed for portrait.</h2>
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:22px"><figure style="margin:0"><img class="frame" src="frames/c01m.jpg" alt="Phone hero: headline at the top, the samurai close below, hand at the hilt"><p class="cap">01 Hero</p></figure><figure style="margin:0"><img class="frame" src="frames/c02m.jpg" alt="Phone About: the slash crescent above the samurai, text at the bottom"><p class="cap">02 About</p></figure><figure style="margin:0"><img class="frame" src="frames/c03m.jpg" alt="Phone Approach: the lantern path toward the house"><p class="cap">03 Approach</p></figure><figure style="margin:0"><img class="frame" src="frames/c04m.jpg" alt="Phone Work: the cut targets by the fire, list below"><p class="cap">04 Work</p></figure><figure style="margin:0"><img class="frame" src="frames/c05m.jpg" alt="Phone Toolkit: weapons against the paper wall, groups in a grid"><p class="cap">05 Toolkit</p></figure><figure style="margin:0"><img class="frame" src="frames/c06m.jpg" alt="Phone Contact: the samurai from behind against the blood moon, pines beside him"><p class="cap">06 Contact</p></figure></div>
+    <p class="muted" style="margin-top:16px;max-width:780px">Each shot has its own portrait camera, with the subject in the middle band and the text in the sky or over a bottom scrim. The climax works especially well upright: his silhouette inside the moon fills the screen.</p>
+  </section>
+
+  <section>
+    <p class="label"><span class="k">型</span>Rules</p>
+    <table>
+      <tr><th>Topic</th><th>Rule</th></tr>
+      <tr><td>Samurai</td><td>He stays on his stone the whole film, facing the moon. Two clips only: the iai (scrubbed by scroll during About) and idle. He never walks.</td></tr>
+      <tr><td>The moon</td><td>Hidden behind the camera until Contact. Before that its presence is only a faint red key light on his front and a red tint in the mist.</td></tr>
+      <tr><td>Slash effect</td><td>A ribbon swept by the katana bone over the cut frames, with additive blending and a fading tail, generated at runtime. No asset needed.</td></tr>
+      <tr><td>Parallax</td><td>Every shot has a foreground layer (reeds, a lantern, him), and every move has a sideways component.</td></tr>
+      <tr><td>Assets</td><td>Same list as v6 (<code>storyboard-v6/ASSET_PROMPTS.txt</code>). The only difference: the pines become a <em>line</em> of 8–10 along the far shore, varied in height, so generate 3–4 pine variants. The ronin’s <code>iai</code> clip is now required, not optional.</td></tr>
+    </table>
+  </section>
+
+  <p class="cap" style="margin-top:80px">侍 · biairmal storyboard v7 · real-time previz renders (design/previz/scene5.js) · placeholder geometry</p>
+</div>
+</body>
+</html>

@@ -6,7 +6,7 @@ How to use: each asset below has a READY-TO-PASTE PROMPT (the shared style
 is already included), a NEGATIVE PROMPT, and EXPORT NOTES for after you generate.
 Copy everything between the "--- copy ---" and "--- end ---" lines.
 
-Reference images: design/storyboard-v6/frames/ (b01-b06, map).
+Reference images: design/storyboard-v7/frames/ (c01-c06, map; the current layout) and design/storyboard-v6/frames/.
 
 ==============================================================================
 TECHNICAL SPEC (applies to every model)
@@ -44,7 +44,7 @@ EXPORT NOTES:
   - Skin weights clean at the shoulders, hips and knees, with the cloth weighted to the chains.
   - Animations (30 fps, in place, no root motion):
   - idle (required): a 4–6 s loop. Calm breathing, a subtle weight shift, the left hand resting on the scabbard by the tsuba.
-  - iai (optional): ~6 s. The thumb breaks the scabbard seal, a step forward as he draws, a rising diagonal cut from the left hip to above the right shoulder, a hold, a blade flick, then a slow re-sheathe. Mocap preferred.
+  - iai (required): ~6 s. The thumb breaks the scabbard seal, a step forward as he draws, a rising diagonal cut from the left hip to above the right shoulder, a hold, a blade flick, then a slow re-sheathe. Mocap preferred.
   - Materials (names): cloth_vest, cloth_kimono, cloth_under, cloth_trousers, cloth_wraps, cloth_obi, rope, bead_dark, bead_light, kasa_lacquer, lacquer_black, lacquer_red (mask interior), horsehair, silk, ito_wrap, iron, blade_steel, seam_light.
   - Light seams: add thin emissive strips (material seam_light, white, emissive 1.0) along:
   - the kasa rim
@@ -146,11 +146,11 @@ EXPORT NOTES:
 3.10 PINE TREE: PINE.GLB
 ==============================================================================
 --- copy ---
-A windswept Japanese black pine (kuromatsu) growing on a lakeshore, 7.5 m tall. A thick, twisted, leaning trunk with deeply fissured dark bark. One long horizontal branch reaching out over the water. Foliage pruned into flat, layered cloud-pads (niwaki style), made of alpha-clipped needle cards. Stylised-realistic Japanese Edo-period aesthetic, cinematic and restrained. Physically based materials with neutral, un-tinted albedo. A monochrome palette: black lacquer, charcoal timber, grey stone, off-white paper and silk. Subtle wear and age: worn edges, faint dust, fine surface detail in the normal maps rather than the geometry. Clean, game-ready topology. No text, logos or signatures. No baked lighting, no ambient occlusion in the albedo, no coloured light. Neutral studio presentation on a plain grey background.
+A windswept Japanese black pine (kuromatsu) growing on a lakeshore, 8–16 m tall. A thick, twisted, leaning trunk with deeply fissured dark bark. Foliage pruned into flat, layered cloud-pads (niwaki style), made of alpha-clipped needle cards. Stylised-realistic Japanese Edo-period aesthetic, cinematic and restrained. Physically based materials with neutral, un-tinted albedo. A monochrome palette: black lacquer, charcoal timber, grey stone, off-white paper and silk. Subtle wear and age: worn edges, faint dust, fine surface detail in the normal maps rather than the geometry. Clean, game-ready topology. No text, logos or signatures. No baked lighting, no ambient occlusion in the albedo, no coloured light. Neutral studio presentation on a plain grey background.
 --- end ---
 EXPORT NOTES:
   - Budget: 15k / 4k · 2048 px (bark) + 1024 px (needle cards)
-  - The long branch must extend about 8 m sideways from the trunk, toward +X. It frames the top of the hero and contact shots.
+  - Make 3–4 variants with different heights and leans (pine_0 … pine_3). They stand in a line on the far shore, silhouetted against the blood moon in the Contact shot, so the outline matters most.
 
 ==============================================================================
 3.11 REED CLUMPS: REEDS.GLB (3 VARIANTS)
@@ -246,7 +246,7 @@ public/experimental/v6/
   weapons.glb            weapons-mobile.glb
   targets.glb
   brazier.glb
-  pine.glb               pine-mobile.glb
+  pine.glb (3–4 variants)  pine-mobile.glb
   reeds.glb
   ridge_near.png  ridge_mid.png  ridge_far.png
   moon_albedo.jpg
@@ -260,6 +260,6 @@ CHECKLIST
 [ ] Every model is a real-world size in metres, Y-up, faces +Z, with its pivot at the base.
 [ ] Material and object names match the export notes.
 [ ] No baked lighting, red tint or moon colour in any texture.
-[ ] Ronin: the idle clip loops, katana_blade exists inside the scabbard, and the cloth chain bones are present.
+[ ] Ronin: the idle clip loops, the iai clip is included, katana_blade exists inside the scabbard, and the cloth chain bones are present.
 [ ] -mobile versions exist for ronin, lantern, house, weapons and pine.
 [ ] The walkway segment tiles seamlessly along Z.
